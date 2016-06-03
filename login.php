@@ -1,19 +1,5 @@
 <?php
-	$db = new mysqli("");
-	if (!$db) {
-		die("No MySQL :(((((");
-	}
-	
-	session_start(); 
-	
-	//if (!isset($_SESSION["usr"])) {
-	// take usr to login screen
-	//}
-	
-	$usr = $_POST["login.usr"];
-	$pw = $_POST["login.pw"];
-	
-	//function  
+	require "core.php";
 	
 	function logIn($usr, $pw) {
 		if ($usr && $pw) {
@@ -56,11 +42,11 @@
 			return false;
 		}
 	}
-	 
-	if (logIn($usr, $pw) == true) {
-	// begin session
-	}
 	
-	// assume they are logged in
-	 
+	session_start();
+	
+	?>
+	<html>
+	</html>
+	<?php
 ?>
