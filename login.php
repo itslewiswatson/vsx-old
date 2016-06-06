@@ -3,6 +3,8 @@
 	
 	function logIn($usr, $pw) {
 		if ($usr && $pw) {
+			global $db;
+			
 			// Check if the username is in fact an email
 			if (strpos($usr, "@") !== false) {
 				$q = $db->query("SELECT usr FROM accounts WHERE email = '" . $usr . "'");
