@@ -46,9 +46,4 @@
 	}
 	
 	session_start();
-	
-	?>
-	<html>
-	</html>
-	<?php
 ?>
