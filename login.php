@@ -1,7 +1,7 @@
 <?php
 	include "/src/templates/header.html";
 	require "core.php";
-			
+	
 	function authenticate($usr, $pw) {
 		if ($usr && $pw) {
 			global $db;
@@ -23,13 +23,13 @@
 			$result = $q->fetch_assoc();
 			
 			if ($q->num_rows == 0) {
-				return array(false);
+				return array(false, ":(");
 			}
 			
 			if ($result["usr"] && $result["passwd"]) {
 				if ($result["passwd"] == $pw) {
 					// Match of password, log in
-					return array(true, "Yes");
+					return array(true, $usr);
 				}
 				else {
 					// This password doesn't match
@@ -50,6 +50,10 @@
 		return array(false, "Please enter your credentials");
 	}
 	
+	function logIn($usr) {
+		$_SESSION["usr"] = $usr;
+	}
+	
 	//include "/src/templates/login.html";
 	
 	if (isset($_POST["email"])) {
@@ -59,19 +63,20 @@
 		$state = authenticate($email, $passwd);
 		
 		if ($state[0] === true) {
+			logIn($state[1]); // Instead of an error message, it returns the user name
 			header("Location: index.php");
 		}
 		else {
 			// Forgive me for this
 			?>
-			<body>
-				<div class="row">
+			<!--<body>
+				<div class="row">-->
 					<div class="text-center">
 						<font color="red"><h5><?php echo $state[1]; ?></h5></font>
 						<hr>
 					</div>
-				</div>
-			</body>
+				<!--</div>
+			</body>-->
 			<?php
 			include "/src/templates/login.html";
 		}

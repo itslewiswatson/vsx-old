@@ -1,5 +1,7 @@
 <?php
+	include "/src/templates/header.html";
 	require "core.php";
+	include "/src/templates/register.html";
 	
 	function isAccount($usr, $email) {
 		global $db;
@@ -27,4 +29,6 @@
 		
 		return array(false, "");
 	}
+	
+	include "/src/templates/footer.html";
 ?>

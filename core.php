@@ -1,7 +1,29 @@
 <?php
+	session_start();
+	
 	global $db;
 	$db = new mysqli("localhost", "root", "", "vsx");
 	if (!$db) {
 		die("Failed to connect to the database");
 	}
+	
+	function handleButtons() {
+		if ($_SESSION && isset($_SESSION["usr"])) {
+			?>
+			<script>
+				function lol() {var l = document.getElementById("login_btn"); var r = document.getElementById("register_btn"); r.remove(); l.remove();}
+				window.onload = lol;
+			</script>
+			<?php
+		}
+		else {
+			?>
+			<script>
+				function lol() {var l = document.getElementById("logged_in_btn"); l.remove();}
+				window.onload = lol;
+			</script>
+			<?php
+		}
+	}
+	handleButtons();
 ?>
