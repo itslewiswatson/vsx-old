@@ -9,16 +9,26 @@
 	
 	function handleButtons() {
 		if ($_SESSION && isset($_SESSION["usr"])) {
+			$current_usr = $_SESSION["usr"];
 			?>
-			<script>
-				function lol() {var l = document.getElementById("login_btn"); var r = document.getElementById("register_btn"); r.remove(); l.remove();}
+			<script type="text/javascript">
+				function lol() {
+					var l = document.getElementById("login_btn");
+					var r = document.getElementById("register_btn");
+					var x = document.getElementById("logged_in_btn");
+					var e = "<?php echo $current_usr; ?>";
+					
+					r.remove();
+					l.remove();
+					x.children[0].innerHTML = "Welcome, " + e + "<span class='caret'></span>";
+				}
 				window.onload = lol;
 			</script>
 			<?php
 		}
 		else {
 			?>
-			<script>
+			<script type="text/javascript">
 				function lol() {var l = document.getElementById("logged_in_btn"); l.remove();}
 				window.onload = lol;
 			</script>
