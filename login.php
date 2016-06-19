@@ -67,19 +67,24 @@
 		else {
 			// Forgive me for this
 			?>
-			<!--<body>
-				<div class="row">-->
-					<div class="text-center">
-						<font color="red"><h5><?php echo $state[1]; ?></h5></font>
-						<hr>
+			<body>
+				<div class="container">
+					<div class="row">
+						<div class="text-center col-sm-6 col-md-4 col-md-offset-4">
+							<!--<font color="red"></h5></font>-->
+							<div class="alert alert-danger" role="alert"><h5><?php echo $state[1]; ?></div>
+						</div>
 					</div>
-				<!--</div>
-			</body>-->
+				</div>
+			</body>
 			<?php
 			include "/src/templates/login.html";
 		}
 	}
 	else {
+		if (isset($_SESSION["usr"])) {
+			header("Location: index.php");
+		}
 		include "/src/templates/login.html";
 	}
 	

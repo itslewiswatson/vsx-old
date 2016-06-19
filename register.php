@@ -70,6 +70,9 @@
 		}
 	}
 	else {
+		if (isset($_SESSION["usr"])) {
+			header("Location: index.php");
+		}
 		include "/src/templates/register.html";
 	}
 	

@@ -6,6 +6,9 @@
 		unset($_SESSION["usr"]);
 		handleButtons();
 	}
+	else {
+		header("Location: index.php");
+	}
 	
 	include "src/templates/footer.html";
 ?>
