@@ -17,9 +17,9 @@
 					return array(false, "There are no users with this email");
 				}
 			}
-						
+			
 			// The actual queries
-			$q = $db->query("SELECT usr, passwd FROM accounts WHERE usr = '" . $usr . "' AND passwd = '" . $pw ."'");
+			$q = $db->query("SELECT usr, passwd FROM accounts WHERE usr = '" . $usr . "'");
 			$result = $q->fetch_assoc();
 			
 			if ($q->num_rows == 0) {
@@ -27,14 +27,12 @@
 			}
 			
 			if ($result["usr"] && $result["passwd"]) {
-				if ($result["passwd"] == $pw) {
+				if (password_verify($pw, $result["passwd"])) {
 					// Match of password, log in
 					return array(true, $usr);
-				}
-				else {
-					// This password doesn't match
-					return array(false, "The password you provided is incorrect");
-				}
+				} 
+				// This password doesn't match
+				return array(false, "The password you provided is incorrect");
 			}
 			else {
 				if (!$result["usr"]) {
