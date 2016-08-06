@@ -1,14 +1,19 @@
 <?php
-	include "src/templates/header.html";
 	require "core.php";
-	
+	ob_start();
+	_header();
+
 	if ($_SESSION && isset($_SESSION["usr"])) {
 		unset($_SESSION["usr"]);
-		handleButtons();
 	}
 	else {
 		header("Location: index.php");
+		ob_end_flush();
+		exit;
 	}
-	
-	include "src/templates/footer.html";
+
+	buttons();
+
+	_footer();
+	ob_end_flush();
 ?>

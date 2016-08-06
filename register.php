@@ -1,6 +1,7 @@
 <?php
-	include "/src/templates/header.html";
+	//include "/src/templates/header.html";
 	require "core.php";
+	_header();
 		
 	function isAccount($usr = NULL, $email = NULL) {
 		global $db;
@@ -76,5 +77,5 @@
 		include "/src/templates/register.html";
 	}
 	
-	include "/src/templates/footer.html";
+	_footer();
 ?>
