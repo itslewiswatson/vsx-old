@@ -1,15 +1,16 @@
 <?php
 	include "src/templates/header.html";
 	require "core.php";
-	
+
 	global $db;
-	
+
 	if (isset($_GET["stock"])) {
 		$stock = $_GET["stock"];
-		
+		$stock = str_clean($_GET["stock"]);
+
 		$res = $db->query("SELECT * FROM stocks__ WHERE abbreviation = '" . $stock . "' LIMIT 1");
 		$stockData = $res->fetch_assoc();
-		
+
 		if ($res->num_rows == 0) {
 			?>
 			<title>Not found (404) - VSX</title>
@@ -24,10 +25,10 @@
 				</div>
 			</body>
 			<?php
-			include "src/templates/footer.html";
+			_footer();
 			return;
 		}
-		
+
 		?>
 		<title><?php echo $stockData["stockName"] . " (" . $stock . ")"; ?> - VSX</title>
 		<body>
@@ -41,71 +42,79 @@
 			</div>
 		</body>
 		<?php
-				
-		include "src/templates/footer.html";
+		_footer();
 		return;
 	}
-	
-	
-	// Main page
+
+	$view = "list";
+	if ($_GET && $_GET["view"] && isset($_GET["view"])) {
+		if (strtolower($_GET["view"]) == "grid") {
+			$view = "grid";
+		}
+		// List otherwise
+	}
+
 	$res = $db->query("SELECT * FROM stocks__ LIMIT 9");
-	
-	function displayStock($row) {
+
+	function drawStocks($v = "list") {
+		global $res;
+		if ($v == "grid") {
+			$i = 0;
+			echo "<div class='row'>";
+
+			while ($row = $res->fetch_assoc()) {
+				stockGrid($row);
+				$i++;
+
+				if (($i % 3) == 0) {
+					echo "</div>";
+					if ($res->num_rows > $i) {
+						echo "<br><div class='row'>";
+					}
+				}
+			}
+		}
+		else {
+			echo "<table>";
+			while ($row = $res->fetch_assoc()) {
+				echo "<tr><td><a href='stocks.php?stock=" . $row["abbreviation"] ."'>" . $row["stockName"] . "</a></td></tr>";
+			}
+			echo "</table>";
+		}
+	}
+
+	function stockGrid($row) {
 		?>
 		<div class="text-center col-md-4">
 			<p><?php echo "<b>" . $row["abbreviation"] . "</b><br>"; echo $row["stockName"]; ?></p>
 			<a href="stocks.php?stock=<?php echo $row["abbreviation"]; ?>"><img src="<?php echo $row["avatar"]; ?>"></a>
 		</div>
 		<?php
-	}	
+	}
+
 	?>
-	<style>
-		img {
-			max-width: 50%;
-			max-height: 50%;
-		}
-	</style>
-	<?php
-	
-	?>
-	<title>Stocks - VSX</title>
-	<body>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					<h1 class="text-center">Stocks</h1>
+		<style>
+			img {
+				max-width: 50%;
+				max-height: 50%;
+			}
+		</style>
+		<title>Stocks - VSX</title>
+		<body>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3">
+						<h1 class="text-center">Stocks</h1>
+					</div>
 				</div>
+				<hr>
 			</div>
-			<hr>
-		</div>
-		<div class="container">
-			<?php
-				$i = 0;
-				echo "<div class='row'>";
-				
-				while ($row = $res->fetch_assoc()) {
-					displayStock($row);
-					$i++;
-					
-					if (($i % 3) == 0) {
-						echo "</div>";
-						if ($res->num_rows > $i) {
-							echo "<br><div class='row'>";
-						}
-					}
-				}
-			?>
-		</div>
-		<!--
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					<h1 class="text-center"></h1>
-				</div>
+			<div class="container">
+				<?php
+					drawStocks($view);
+				?>
 			</div>
-		</div>
-		-->
-	</body>
+		</body>
 	<?php
-	include "src/templates/footer.html";
+	_footer();
 ?>
