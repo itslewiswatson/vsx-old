@@ -1,7 +1,8 @@
 <?php
-	include "/src/templates/header.html";
 	require "core.php";
-	
+	_header();
+	buttons();
+
 	function celebrate() {
 		?>
 		<div class="container">
@@ -13,10 +14,10 @@
 		</div>
 		<?php
 	}
-	
+
 	if (isset($_SESSION["usr"])) {
 		celebrate();
 	}
-	
-	include "/src/templates/footer.html";
+
+	_footer();
 ?>
