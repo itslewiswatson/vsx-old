@@ -39,6 +39,10 @@
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 	}
 
+	function isLoggedIn() {
+		return isset($_SESSION["usr"]) ? true : false;
+	}
+
 	function _footer() {
 		include "src/templates/footer.html";
 	}
