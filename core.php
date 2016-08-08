@@ -16,7 +16,7 @@
 	<script type="text/javascript">
 		window.onload = function () {
 			document.getElementById("right-navbar").innerHTML = "";
-			var u = "" + String(<?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'Username'"; echo strval($s); ?>) + "";
+			var u = "" + String(<?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'N/A'"; echo strval($s); ?>) + "";
 			var loggedIn = <?php isset($_SESSION["usr"]) ? $s = 1 : $s = 0; echo $s; ?>;
 			var list = "";
 			if (loggedIn == 0) {

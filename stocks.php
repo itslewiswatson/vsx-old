@@ -1,7 +1,6 @@
 <?php
-	include "src/templates/header.html";
 	require "core.php";
-
+	_header();
 	global $db;
 
 	if (isset($_GET["stock"])) {

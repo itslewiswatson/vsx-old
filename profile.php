@@ -14,8 +14,14 @@
         }
     }
     else {
-        _footer();
-        exit;
+        if (isLoggedIn()) {
+            $profile = $_SESSION["usr"];
+        }
+        else {
+            echo "You must be logged in to view user profiles";
+            _footer();
+            exit;
+        }
     }
 
     $profile = str_clean($profile);
@@ -26,6 +32,8 @@
         _footer();
         exit;
     }
+
+    
 
     _footer();
 ?>

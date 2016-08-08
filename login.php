@@ -79,14 +79,14 @@
 				</div>
 			</body>
 			<?php
-			include "/src/templates/login.html";
+			include "src/templates/login.html";
 		}
 	}
 	else {
 		if (isset($_SESSION["usr"])) {
 			header("Location: index.php");
 		}
-		include "/src/templates/login.html";
+		include "src/templates/login.html";
 	}
 
 	_footer();
