@@ -1,13 +1,12 @@
 <?php
 	require "core.php";
-	_header();
 	global $db;
 
 	if (isset($_GET["stock"])) {
 		$stock = $_GET["stock"];
 		$stock = str_clean($_GET["stock"]);
 
-		$res = $db->query("SELECT * FROM stocks__ WHERE abbreviation = '" . $stock . "' LIMIT 1");
+		$res = $db->query("SELECT * FROM stocks__ WHERE stock = '" . $stock . "' LIMIT 1");
 		$stockData = $res->fetch_assoc();
 
 		if ($res->num_rows == 0) {
@@ -24,24 +23,24 @@
 				</div>
 			</body>
 			<?php
-			_footer();
+			//_footer();
 			return;
 		}
 
 		?>
-		<title><?php echo $stockData["stockName"] . " (" . $stock . ")"; ?> - VSX</title>
+		<title><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?> - VSX</title>
 		<body>
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3">
-						<h1 class="text-center"><?php echo $stockData["stockName"] . " (" . $stock . ")"; ?></h1>
+						<h1 class="text-center"><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?></h1>
 					</div>
 				</div>
 				<hr>
 			</div>
 		</body>
 		<?php
-		_footer();
+		//_footer();
 		return;
 	}
 
@@ -76,7 +75,7 @@
 		else {
 			echo "<table>";
 			while ($row = $res->fetch_assoc()) {
-				echo "<tr><td><a href='stocks.php?stock=" . $row["abbreviation"] ."'>" . $row["stockName"] . "</a></td></tr>";
+				echo "<tr><td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["company_name"] . "</a></td></tr>";
 			}
 			echo "</table>";
 		}
@@ -85,8 +84,8 @@
 	function stockGrid($row) {
 		?>
 		<div class="text-center col-md-4">
-			<p><?php echo "<b>" . $row["abbreviation"] . "</b><br>"; echo $row["stockName"]; ?></p>
-			<a href="stocks.php?stock=<?php echo $row["abbreviation"]; ?>"><img src="<?php echo $row["avatar"]; ?>"></a>
+			<p><?php echo "<b>" . $row["stock"] . "</b><br>"; echo $row["company_name"]; ?></p>
+			<a href="stocks.php?stock=<?php echo $row["stock"]; ?>"><img src="<?php echo $row["company_logo"]; ?>"></a>
 		</div>
 		<?php
 	}
@@ -115,5 +114,5 @@
 			</div>
 		</body>
 	<?php
-	_footer();
+//	_footer();
 ?>

@@ -1,6 +1,5 @@
 <?php
 	require "core.php";
-	_header();
 	buttons();
 
 	function celebrate() {

@@ -1,7 +1,6 @@
 <?php
 	require "core.php";
 	ob_start();
-	_header();
 
 	function authenticate($usr, $pw) {
 		if ($usr && $pw) {
@@ -10,17 +9,14 @@
 			// Check if the username is in fact an email
 			// If it is, we find their username first
 			if (strpos($usr, "@") !== false) {
-				$q = $db->query("SELECT usr FROM accounts WHERE email = '" . $usr . "'");
-				$usr = $q->fetch_assoc()["usr"];
-
-				if (!$usr) {
-					// Cannot find a user with that email
+				$q = $db->query("SELECT usr FROM users WHERE email = '" . $usr . "'");
+				if (!$q || $q->num_rows == 0) {
 					return array(false, "There are no users with this email");
 				}
 			}
 
 			// The actual queries
-			$q = $db->query("SELECT usr, passwd FROM accounts WHERE usr = '" . $usr . "'");
+			$q = $db->query("SELECT usr, passwd FROM users WHERE usr = '" . $usr . "'");
 			$result = $q->fetch_assoc();
 
 			if ($q->num_rows == 0) {
@@ -61,8 +57,8 @@
 
 		if ($state[0] === true) {
 			logIn($state[1]); // Instead of an error message, it returns the user name
-			header("Location: index.php");
 			ob_end_flush();
+			header("Location: index.php");
 			exit;
 		}
 		else {
@@ -84,10 +80,9 @@
 	}
 	else {
 		if (isset($_SESSION["usr"])) {
+			ob_end_flush();
 			header("Location: index.php");
 		}
 		include "src/templates/login.html";
 	}
-
-	_footer();
 ?>
