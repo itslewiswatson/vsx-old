@@ -104,6 +104,10 @@
 					<div class="col-md-6 col-md-offset-3">
 						<h1 class="text-center">Stocks</h1>
 					</div>
+					<div class="btn-group" role="group">
+				        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
+				        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
+				    </div>
 				</div>
 				<hr>
 			</div>

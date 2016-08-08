@@ -38,7 +38,7 @@
 					list += '<li id="login_btn"><a href="login.php">Login</a></li>';
 				}
 				else if (loggedIn == 1) {
-					list += '<li id="logged_in_btn" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + "" + u + "" + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="#">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Sign out</a></li></ul></li>';
+					list += '<li id="logged_in_btn" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + "" + u + "" + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php?u=' + u + '">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Sign out</a></li></ul></li>';
 				}
 				document.getElementById("right-navbar").innerHTML = list;
 				footer();

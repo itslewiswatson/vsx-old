@@ -3,9 +3,9 @@
     _header();
     global $db;
 
-    if ($_GET && $_GET["profile"] && isset($_GET["profile"])) {
+    if ($_GET && $_GET["u"] && isset($_GET["u"])) {
         if (isLoggedIn()) {
-            $profile = $_GET["profile"];
+            $profile = $_GET["u"];
         }
         else {
             echo "You must be logged in to view user profiles";
@@ -33,7 +33,7 @@
         exit;
     }
 
-    
+
 
     _footer();
 ?>

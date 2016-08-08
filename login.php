@@ -16,7 +16,7 @@
 			}
 
 			// The actual queries
-			$q = $db->query("SELECT usr, passwd FROM users WHERE usr = '" . $usr . "'");
+			$q = $db->query("SELECT usr, passwd FROM users WHERE email = '" . $usr . "'");
 			$result = $q->fetch_assoc();
 
 			if ($q->num_rows == 0) {
@@ -26,7 +26,7 @@
 			if ($result["usr"] && $result["passwd"]) {
 				if (password_verify($pw, $result["passwd"])) {
 					// Match of password, log in
-					return array(true, $usr);
+					return array(true, $result["usr"]);
 				}
 				// This password doesn't match
 				return array(false, "The password you provided is incorrect");
