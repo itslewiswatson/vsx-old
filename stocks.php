@@ -1,12 +1,13 @@
 <?php
 	require "core.php";
 	global $db;
+	$fields = array("stocks__.stock AS stock", "company_name", "company_logo", "DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated");
 
 	if (isset($_GET["stock"])) {
 		$stock = $_GET["stock"];
 		$stock = str_clean($_GET["stock"]);
 
-		$res = $db->query("SELECT * FROM stocks__ WHERE stock = '" . $stock . "' LIMIT 1");
+		$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock AND stocks__.stock = '" . $stock . "'");
 		$stockData = $res->fetch_assoc();
 
 		if ($res->num_rows == 0) {
@@ -52,7 +53,7 @@
 		// List otherwise
 	}
 
-	$res = $db->query("SELECT * FROM stocks__ LIMIT 9");
+	$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock GROUP BY stocks__.stock");
 
 	function drawStocks($v = "list") {
 		global $res;
@@ -73,11 +74,87 @@
 			}
 		}
 		else {
-			echo "<table>";
-			while ($row = $res->fetch_assoc()) {
-				echo "<tr><td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["company_name"] . "</a></td></tr>";
-			}
-			echo "</table>";
+			?>
+			<html>
+				<body>
+					<div class="container">
+						<div class="row">
+							<table class="table table-hover">
+								<tr>
+									<th>Stock</th>
+									<th>Company Name</th>
+									<th>Current Price</th>
+									<th>Previous Price</th>
+									<th>Difference</th>
+									<th>Last Updated</th>
+								</tr>
+								<?php
+									while ($row = $res->fetch_assoc()) {
+										global $db;
+										$CP = $db->query(
+											"SELECT price AS current_price
+											FROM stocks__history
+											WHERE stock = '" . $row["stock"] . "'
+											AND timing =
+												(SELECT MAX(timing)
+												FROM stocks__history
+												WHERE stock = '" . $row["stock"] . "'
+												)
+											GROUP BY stock"
+										);
+										$current_price = $CP->fetch_assoc()["current_price"];
+
+										$PP = $db->query(
+											"SELECT price AS previous_price
+											FROM stocks__history
+											WHERE stock = '" . $row["stock"] . "'
+											AND timing =
+												(SELECT MAX(timing)
+												FROM stocks__history
+												WHERE stock = '" . $row["stock"] . "'
+												AND timing <
+													(SELECT MAX(timing)
+													FROM stocks__history
+													WHERE stock = '" . $row["stock"] . "'
+													)
+												)
+											GROUP BY stock"
+										);
+										$previous_price = $PP->fetch_assoc()["previous_price"];
+
+										$diff = $current_price - $previous_price;
+										$percentage = round(($diff / $previous_price) * 100, 2);
+										if ($diff > 0) {
+											$diff = "+" . $diff;
+											$colour = "success";
+										}
+										elseif ($diff < 0) {
+											$diff = "-" . abs($diff);
+											$colour = "danger";
+										}
+										else {
+											$diff = "0";
+											$colour = "warning";
+										}
+
+
+										echo "<tr>
+											<td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["stock"] . "</a></td>
+											<td>" . $row["company_name"] . "</td>
+											<td>" . "$" . sprintf("%4.2f", $current_price) . "</td>
+											<td>" . "$" . sprintf("%4.2f", $previous_price) . "</td>
+											<td class='" . $colour . "'>" . $percentage . "% (" . $diff . ")</td>
+											<td>" . $row["last_updated"] . "</td>
+											</td>
+										</tr>";
+									}
+								?>
+						</table>
+						</div>
+					</div>
+				</body>
+			</html>
+			<?php
 		}
 	}
 
