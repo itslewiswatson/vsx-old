@@ -57,7 +57,6 @@
 	function isLoggedIn() {
 		return isset($_SESSION["usr"]) ? true : false;
 	}
-
-	//include "src/templates/footer.html";
+	
 	ob_end_flush();
 ?>

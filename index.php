@@ -1,5 +1,6 @@
 <?php
 	require "core.php";
+	ob_start();
 	buttons();
 
 	function celebrate() {
@@ -19,4 +20,5 @@
 	}
 
 	_footer();
+	ob_end_flush();
 ?>
