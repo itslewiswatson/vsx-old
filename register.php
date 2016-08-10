@@ -6,11 +6,13 @@
 		global $db;
 		$queryString = "";
 
+		$usr = str_clean($usr);
+
 		if (!$email || $email == "" || $email == NULL) {
-			$queryString = "SELECT usr, email FROM users WHERE usr = '" . $usr . "'";
+			$queryString = "SELECT usr, email FROM users WHERE usr LIKE '" . $usr . "' OR LOWER(usr) LIKE '" . $usr . "' GROUP BY usr";
 		}
 		else {
-			$queryString = "SELECT usr, email FROM users WHERE usr = '" . $usr . "' OR email = '" . $email . "'";
+			$queryString = "SELECT usr, email FROM users WHERE usr LIKE '" . $usr . "' OR email = '" . $email . "' GROUP BY usr";
 		}
 
 		$q = $db->query($queryString);
@@ -19,28 +21,32 @@
 		$res_email = $result["email"];
 
 		if ($res_usr !== NULL) {
-			return array(true, "An account with this username already exists");
+			$appendage = "";
+			if ($res_usr != $usr && strtolower($res_usr) == strtolower($usr)) {
+				$appendage = ", in different case,";
+			}
+			return array(false, "An account with this username" . $appendage . " already exists");
 		}
 		elseif ($res_email !== NULL) {
-			return array(true, "An account with this email already exists");
+			return array(false, "An account with this email already exists");
 		}
 
-		return array(false, "");
+		return array(true, "");
 	}
 
 	function register($usr, $email, $passwd) {
 		global $db;
 
-		if (isAccount($usr)[1] === false) {
+		if (isAccount($usr)[1] == false) {
 			return isAccount($usr)[1];
 		}
-		if (isAccount($email)[1] === false) {
+		if (isAccount($email)[1] == false) {
 			return isAccount(NULL, $email)[1];
 		}
 
 		$passwd = password_hash($passwd, PASSWORD_BCRYPT);
 
-		$statement = $db->prepare("INSERT INTO users (usr, email, passwd) VALUES (?, ?, ?)");
+		$statement = $db->prepare("INSERT INTO users (usr, email, passwd, registered_on) VALUES (?, ?, ?, CURRENT_TIMESTAMP)");
 		$statement->bind_param("sss", $usr, $email, $passwd);
 		$statement->execute();
 
