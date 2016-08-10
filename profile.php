@@ -66,25 +66,48 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-4" id="avatar">
-                            <img class="img-responsive" src=<?php echo $avatar; ?> >
-                            <?php
-                                if (isUserSelf($profile)) {
-                                    ?>
-                                    <hr>
-                                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-default">Edit profile</button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-default">Edit account settings</button>
-                                        </div>
-                                    </div>
-                                    <?php
-                                }
-                            ?>
+							<div class="thumbnail">
+								<img class="img-responsive" src=<?php echo $avatar; ?> >
+								<hr>
+								<h3><?php echo $profile; ?></h3>
+								<?php
+									if (isset($result["name"])) {
+										?>
+											<h5><i><?php echo $result["name"]; ?></i></h5>
+										<?php
+									}
+									if (isset($result["bio"])) {
+										?>
+											<p><?php echo $result["bio"]; ?></p>
+										<?php
+									}
+								?>
+							</div>
+							<?php
+								if (isUserSelf($profile)) {
+									?>
+									<hr>
+									<div class="btn-group btn-group-justified" role="group" aria-label="...">
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-default">Edit profile</button>
+										</div>
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-default">Edit account settings</button>
+										</div>
+									</div>
+									<?php
+								}
+							?>
                         </div>
                         <div class="col-md-8">
-                            <p>Profile details</p>
+                            <h1><?php echo $profile; ?></h1>
+							<h3>Stocks</h3>
+							<hr>
+							<p>Shareholder in {} different stocks</p>
+							<h3>Monetary</h3>
+							<hr>
+							<p>Total Invested:</p>
+							<p>Profit Loss:
                         </div>
                     </div>
                 </div>
