@@ -69,19 +69,21 @@
 							<div class="thumbnail">
 								<img class="img-responsive" src=<?php echo $avatar; ?> >
 								<hr>
-								<h3><?php echo $profile; ?></h3>
-								<?php
-									if (isset($result["name"])) {
-										?>
-											<h5><i><?php echo $result["name"]; ?></i></h5>
-										<?php
-									}
-									if (isset($result["bio"])) {
-										?>
-											<p><?php echo $result["bio"]; ?></p>
-										<?php
-									}
-								?>
+                                <div style="padding-left: 10px; padding-right: 10px;">
+    								<h3><?php echo $profile; ?></h3>
+    								<?php
+    									if (isset($result["name"])) {
+    										?>
+    											<h5><i><?php echo $result["name"]; ?></i></h5>
+    										<?php
+    									}
+    									if (isset($result["bio"])) {
+    										?>
+    											<p><?php echo $result["bio"]; ?></p>
+    										<?php
+    									}
+    								?>
+                                </div>
 							</div>
 							<?php
 								if (isUserSelf($profile)) {
@@ -92,7 +94,7 @@
 											<button type="button" class="btn btn-default">Edit profile</button>
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-default">Edit account settings</button>
+											<button type="button" class="btn btn-default">Edit account</button>
 										</div>
 									</div>
 									<?php
@@ -103,11 +105,19 @@
                             <h1><?php echo $profile; ?></h1>
 							<h3>Stocks</h3>
 							<hr>
-							<p>Shareholder in {} different stocks</p>
+							<p>Shareholder of <strong></strong> different stocks</p>
+                            <p>Owns <strong></strong>% of all stock listed on VSX</p>
+                            <!-- Maybe check if a majority shareholder in one stock, and display it? -->
+                            <p>Owns <strong></strong>% of $stock</p>
 							<h3>Monetary</h3>
 							<hr>
+                            <p>Current Returns:</p>
 							<p>Total Invested:</p>
-							<p>Profit Loss:
+							<p>Profit Loss:</p>
+                            <h3>Activity</h3>
+                            <hr>
+                            <p>Registed:</p>
+                            <p>Last Active:</p>
                         </div>
                     </div>
                 </div>
