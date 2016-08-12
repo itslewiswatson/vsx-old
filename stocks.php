@@ -87,10 +87,13 @@
 									<th>Previous Price</th>
 									<th>Difference</th>
 									<th>Last Updated</th>
+									<th>Volume</th>
 								</tr>
 								<?php
 									while ($row = $res->fetch_assoc()) {
 										global $db;
+
+										// Current price
 										$CP = $db->query(
 											"SELECT price AS current_price
 											FROM stocks__history
@@ -104,6 +107,7 @@
 										);
 										$current_price = $CP->fetch_assoc()["current_price"];
 
+										// Previous price
 										$PP = $db->query(
 											"SELECT price AS previous_price
 											FROM stocks__history
@@ -122,6 +126,16 @@
 										);
 										$previous_price = $PP->fetch_assoc()["previous_price"];
 
+										// Volume traded today
+										$V = $db->query(
+											"SELECT qty
+											FROM stocks__transactions
+											WHERE stock = '" . $row["stock"] . "'
+											AND DATE(timing) = CURDATE()"
+										);
+										$vol = $V->fetch_assoc()["qty"];
+										$vol = $vol != NULL ? $vol : "0"; // Accounting for possible cases
+
 										$diff = $current_price - $previous_price;
 										$percentage = round(($diff / $previous_price) * 100, 2);
 										if ($diff > 0) {
@@ -137,7 +151,6 @@
 											$colour = "warning";
 										}
 
-
 										echo "<tr>
 											<td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["stock"] . "</a></td>
 											<td>" . $row["company_name"] . "</td>
@@ -145,7 +158,7 @@
 											<td>" . "$" . sprintf("%4.2f", $previous_price) . "</td>
 											<td class='" . $colour . "'>" . $percentage . "% (" . $diff . ")</td>
 											<td>" . $row["last_updated"] . "</td>
-											</td>
+											<td>" . $vol . "</td>
 										</tr>";
 									}
 								?>
@@ -168,32 +181,29 @@
 	}
 
 	?>
-		<style>
-			img {
-				max-width: 50%;
-				max-height: 50%;
-			}
-		</style>
-		<title>Stocks - VSX</title>
-		<body>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-6 col-md-offset-3">
-						<h1 class="text-center">Stocks</h1>
-					</div>
-					<div class="btn-group" role="group">
-				        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
-				        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
-				    </div>
+	<style>
+		img {
+			max-width: 50%;
+			max-height: 50%;
+		}
+	</style>
+	<title>Stocks - VSX</title>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3">
+					<h1 class="text-center">Stocks</h1>
 				</div>
-				<hr>
+				<div class="btn-group" role="group">
+			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
+			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
+			    </div>
 			</div>
-			<div class="container">
-				<?php
-					drawStocks($view);
-				?>
-			</div>
-		</body>
-	<?php
-//	_footer();
-?>
+			<hr>
+		</div>
+		<div class="container">
+			<?php
+				drawStocks($view);
+			?>
+		</div>
+	</body>
