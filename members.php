@@ -78,13 +78,13 @@
 			<body>
 				<div class="container">
                     <div class="row">
-    					<table class="table table-hover" id="results-table">
+    					<table class="table table-hover">
     						<tr>
     							<th>Username</th>
     							<th>Name</th>
     							<th>Website</th>
-    							<th>Last visited</th>
-    							<th>Registered on</th>
+    							<th>Last Active</th>
+    							<th>Registered On</th>
     						</tr>
     						<?php
     							echo "Showing " . $query->num_rows . " of " . $row_count;
