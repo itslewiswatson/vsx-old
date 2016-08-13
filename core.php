@@ -14,6 +14,17 @@
 		die("Failed to connect to the database");
 	}
 
+	function updateUser() {
+		if (isset($_SESSION["usr"])) {
+			global $db;
+			$usr = $_SESSION["usr"];
+			$statement = $db->prepare("UPDATE users SET ip = ?, last_visited = CURRENT_TIMESTAMP() WHERE usr = ?");
+			$statement->bind_param("ss", $_SERVER["REMOTE_ADDR"], $usr);
+			$statement->execute();
+		}
+	}
+	updateUser();
+
 	function _header() {
 		return;
 	}
