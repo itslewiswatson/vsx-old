@@ -1,0 +1,10 @@
+.avatar-display img {
+    max-width: 325px;
+    width: 150%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.profile {
+    padding-top: 15px;
+}
