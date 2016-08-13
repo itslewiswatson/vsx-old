@@ -1,7 +1,13 @@
 <?php
 	require "core.php";
 	global $db;
-	$fields = array("stocks__.stock AS stock", "company_name", "company_logo", "DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated");
+	$fields = array(
+		"stocks__.stock AS stock",
+		"company_name",
+		"company_logo",
+		"company_bio",
+		"DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated"
+	);
 
 	if (isset($_GET["stock"])) {
 		$stock = $_GET["stock"];
@@ -10,6 +16,7 @@
 		$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock AND stocks__.stock = '" . $stock . "'");
 		$stockData = $res->fetch_assoc();
 
+		// If we cannot find anything
 		if ($res->num_rows == 0) {
 			?>
 			<title>Not found (404) - VSX</title>
@@ -24,24 +31,100 @@
 				</div>
 			</body>
 			<?php
-			//_footer();
 			return;
 		}
 
+		// Display everything about the company
 		?>
-		<title><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?> - VSX</title>
-		<body>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-6 col-md-offset-3">
-						<h1 class="text-center"><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?></h1>
+		<html>
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+			<script type="text/javascript">
+				google.charts.load('current', {packages: ['corechart', 'line']});
+				google.charts.setOnLoadCallback(drawLogScales);
+				google.charts.setOnLoadCallback(drawCrosshairs);
+
+				function drawLogScales() {
+				  	var data = new google.visualization.DataTable();
+				  	data.addColumn('datetime', 'X');
+				  	data.addColumn('number', 'Price');
+
+					data.addRows([
+						<?php
+							$rsq = $db->query(
+								"SELECT UNIX_TIMESTAMP(timing) AS timing2, price
+								FROM stocks__history
+								WHERE stock = '" . $stock . "'
+								ORDER BY timing2 ASC
+								LIMIT 100"
+							);
+							while ($row = $rsq->fetch_assoc()) {
+								// JavaScript works in milliseconds instead of normal seconds.
+								echo "[new Date(" . $row["timing2"] * 1000 . "), " . $row["price"] . "],\n";
+							}
+						?>
+						/*
+						[new Date(2000, 8, 5), 0],
+						[new Date(2000, 8, 6), 45],
+						[new Date(2000, 8, 7), 32],
+						*/
+			      	]);
+
+				  	var options = {
+						hAxis: {
+					  		title: 'Time',
+					  		logScale: false
+						},
+						vAxis: {
+					  		title: 'Price',
+					  		logScale: false,
+							format: "currency"
+						},
+						legend: {position: "none"}
+				  	};
+
+				  	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+				  	chart.draw(data, options);
+				}
+			</script>
+			<link rel="stylesheet" type="text/css" href="src/css/custom.css"/>
+			<title><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?> - VSX</title>
+			<body>
+				<!--
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-6 col-md-offset-3">
+							<h1 class="text-center"><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?></h1>
+						</div>
+					</div>
+					<hr>
+				</div>
+				-->
+				<div class="container">
+					<div class="row">
+						<div class="col-md-4 avatar-display">
+							<div class="thumbnail profile">
+								<img src=<?php echo $stockData["company_logo"]; ?>>
+								<hr>
+								<div style="padding-right: 10px; padding-left: 10px">
+									<h3><?php echo $stockData["stock"]; ?></h3>
+									<h5><?php echo $stockData["company_name"]; ?></h3>
+									<p><?php echo $stockData["company_bio"]; ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-8">
+							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
+							<div id="chart_div">
+								<!-- Blank div for the graph -->
+							</div>
+							<hr>
+							<p>Buy this stock now!</p>
+						</div>
 					</div>
 				</div>
-				<hr>
-			</div>
-		</body>
+			</body>
+		</html>
 		<?php
-		//_footer();
 		return;
 	}
 
@@ -67,6 +150,7 @@
 
 				if (($i % 3) == 0) {
 					echo "</div>";
+					echo "<hr>";
 					if ($res->num_rows > $i) {
 						echo "<br><div class='row'>";
 					}
@@ -154,8 +238,8 @@
 										echo "<tr>
 											<td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["stock"] . "</a></td>
 											<td>" . $row["company_name"] . "</td>
-											<td>" . "$" . sprintf("%4.2f", $current_price) . "</td>
-											<td>" . "$" . sprintf("%4.2f", $previous_price) . "</td>
+											<td>" . "$" . number_format($current_price, 2) . "</td>
+											<td>" . "$" . number_format($previous_price, 2) . "</td>
 											<td class='" . $colour . "'>" . $percentage . "% (" . $diff . ")</td>
 											<td>" . $row["last_updated"] . "</td>
 											<td>" . $vol . "</td>
