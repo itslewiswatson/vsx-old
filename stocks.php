@@ -118,7 +118,33 @@
 								<!-- Blank div for the graph -->
 							</div>
 							<hr>
-							<p>Buy this stock now!</p>
+							<p class="text-center">You currently own <strong>$shares</strong> (%) of <strong>$stock</strong>, valued at <strong>$amount</strong></p>
+							<hr>
+							<!-- Hidden form to retain current GET stock parameter -->
+							<div class="col-md-6 text-center">
+								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
+									<div class="form-group">
+										<div class="input-group col-md-8 col-md-offset-2">
+											<!--<div class="input-group-addon">$</div>-->
+											<input type="text" class="form-control" placeholder="Quantity">
+										</div>
+									</div>
+									<p id="buy-text">This will cost you <strong>$15,205.23</strong></p>
+									<button type="submit" class="btn btn-primary">Buy Shares</button>
+								</form>
+							</div>
+							<div class="col-md-6 text-center">
+								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
+									<div class="form-group">
+										<div class="input-group col-md-8 col-md-offset-2">
+											<!--<div class="input-group-addon">$</div>-->
+											<input type="text" class="form-control" placeholder="Quantity">
+										</div>
+									</div>
+									<p id="sell-text">You will gain <strong>$15,205.23</strong></p>
+									<button type="submit" class="btn btn-primary">Sell Shares</button>
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
