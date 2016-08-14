@@ -41,8 +41,8 @@
 
 	// The main one
 	$fields = array(
-		"DATE_FORMAT(registered_on, '%l:%i %p ─ %d.%m.%Y') AS registered_on",
-		"DATE_FORMAT(last_visited, '%l:%i %p ─ %d.%m.%Y') AS last_visited",
+		"DATE_FORMAT(registered_on, '%d.%m.%Y ─ %l:%i %p') AS registered_on",
+		"DATE_FORMAT(last_visited, '%d.%m.%Y ─ %l:%i %p') AS last_visited",
 		"name",
 		"website",
 		"avatar",
@@ -221,11 +221,11 @@
                             <!--<h1><?php //echo $profile; ?></h1>-->
                             <h3>User</h3>
                             <!-- Add option to hide email -->
-                            <p>Email: <a href=<?php echo "mailto:" . $result["email"]; ?> target="_top"><?php echo $result["email"]; ?></a></p>
+                            <p><strong>Email:</strong> <a href=<?php echo "mailto:" . $result["email"]; ?> target="_top"><?php echo $result["email"]; ?></a></p>
                             <!-- Add flag and country (current placeholder) -->
-                            <p>Location: <?php echo $countryLong; ?> <img src="src/images/blank.gif" class='<?php echo "flag flag-" . strtolower($countryShort) . ""; ?>'/></p>
-                            <p>Registered: <?php echo $result["registered_on"]; ?></p>
-                            <p>Last Active: <?php echo $result["last_visited"]; ?></p>
+                            <p><strong>Location:</strong> <?php echo $countryLong; ?> <img src="src/images/blank.gif" class='<?php echo "flag flag-" . strtolower($countryShort) . ""; ?>'/></p>
+                            <p><strong>Registered:</strong> <?php echo $result["registered_on"]; ?></p>
+                            <p><strong>Last Active:</strong> <?php echo $result["last_visited"]; ?></p>
                             <hr>
 							<h3>Stocks</h3>
 							<p>Shareholder of <strong><?php echo $stock_count; ?></strong> different stock(s)</p>
@@ -240,8 +240,8 @@
 							?>
                             <hr>
 							<h3>Monetary</h3>
-                            <p>Current Returns: $<?php echo number_format($total_value, 2); ?></p>
-							<p>Total Invested: $<?php echo number_format($total_investments, 2); ?></p>
+                            <p><strong>Total Invested:</strong> $<?php echo number_format($total_investments, 2); ?></p>
+                            <p><strong>Current Returns:</strong> $<?php echo number_format($total_value, 2); ?></p>
 							<!--<p>Profit Loss:</p>-->
                             <hr>
                             <h3>Recent Activity</h3>
