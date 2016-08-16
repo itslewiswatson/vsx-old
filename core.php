@@ -49,7 +49,7 @@
 					list += '<li id="login_btn"><a href="login.php">Login</a></li>';
 				}
 				else if (loggedIn == 1) {
-					list += '<li id="logged_in_btn" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + "" + u + "" + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php?u=' + u + '">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
+					list += '<li id="logged_in_btn" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + "" + u + "" + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
 				}
 				document.getElementById("right-navbar").innerHTML = list;
 				footer();
@@ -63,6 +63,10 @@
 		$string = str_replace('  ', ' ', $string);
 		$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+	}
+
+	function numerise($string) {
+		return preg_replace("/[^0-9,.]/", "", $string);
 	}
 
 	function isLoggedIn() {
