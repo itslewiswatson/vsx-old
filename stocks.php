@@ -1,5 +1,6 @@
 <?php
-	require "core.php";
+	require_once "core.php";
+	require_once "stocks_util.php";
 	global $db;
 	$fields = array(
 		"stocks__.stock AS stock",
@@ -31,17 +32,40 @@
 				</div>
 			</body>
 			<?php
-			return;
+			exit;
+		}
+
+		// Check if we have any post data about buying
+		if (isset($_POST["buy"]) || isset($_POST["sell"])) {
+			// require profile utils
+			if (isset($_POST["buy"])) {
+				$amount = $_POST["buy"];
+				$amount = numerise($amount);
+				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
+					echo "Enter the correct fuggen input";
+					exit;
+				}
+			}
+			elseif (isset($_POST["sell"])) {
+				$amount = $_POST["sell"];
+				$amount = numerise($amount);
+				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
+					echo "Enter the correct fuggen input";
+					exit;
+				}
+			}
+			exit;
 		}
 
 		// Display everything about the company
 		?>
+		<!DOCTYPE html>
 		<html>
 			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 			<script type="text/javascript">
 				google.charts.load('current', {packages: ['corechart', 'line']});
 				google.charts.setOnLoadCallback(drawLogScales);
-				google.charts.setOnLoadCallback(drawCrosshairs);
+				//google.charts.setOnLoadCallback(drawCrosshairs);
 
 				function drawLogScales() {
 				  	var data = new google.visualization.DataTable();
@@ -62,11 +86,6 @@
 								echo "[new Date(" . $row["timing2"] * 1000 . "), " . $row["price"] . "],\n";
 							}
 						?>
-						/*
-						[new Date(2000, 8, 5), 0],
-						[new Date(2000, 8, 6), 45],
-						[new Date(2000, 8, 7), 32],
-						*/
 			      	]);
 
 				  	var options = {
@@ -118,18 +137,35 @@
 								<!-- Blank div for the graph -->
 							</div>
 							<hr>
-							<p class="text-center">You currently own <strong>$shares</strong> (%) of <strong>$stock</strong>, valued at <strong>$amount</strong></p>
-							<hr>
+							<?php
+								if (isset($_SESSION["usr"])) {
+									$owned_amount = getUserStocks($_SESSION["usr"], $stockData["stock"]);
+									$total_amount = getStockTotalAmount($stockData["stock"]);
+									if ($total_amount == 0) {
+										$division = 0;
+									}
+									else {
+										$division = $owned_amount / $total_amount;
+									}
+									$current_price = getStockCurrentPrice($stockData["stock"]);
+									$value = $current_price * $owned_amount;
+									?>
+										<p class="text-center">You currently own <strong><?php echo $owned_amount; ?></strong> (<?php echo round(($division) * 100, 2) ?>%) of <strong><?php echo $stockData["stock"]; ?></strong>, valued at <strong>$<?php echo number_format($value, 2); ?></strong></p>
+										<hr>
+									<?php
+								}
+							?>
+
 							<!-- Hidden form to retain current GET stock parameter -->
 							<div class="col-md-6 text-center">
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
 											<!--<div class="input-group-addon">$</div>-->
-											<input type="text" class="form-control" placeholder="Quantity">
+											<input type="text" id="buy" name="buy" class="form-control" placeholder="Quantity">
 										</div>
 									</div>
-									<p id="buy-text">This will cost you <strong>$15,205.23</strong></p>
+									<p id="buy-text"></p>
 									<button type="submit" class="btn btn-primary">Buy Shares</button>
 								</form>
 							</div>
@@ -138,16 +174,25 @@
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
 											<!--<div class="input-group-addon">$</div>-->
-											<input type="text" class="form-control" placeholder="Quantity">
+											<input type="text" id="sell" name="sell" class="form-control" placeholder="Quantity">
 										</div>
 									</div>
-									<p id="sell-text">You will gain <strong>$15,205.23</strong></p>
+									<p id="sell-text"></p>
 									<button type="submit" class="btn btn-primary">Sell Shares</button>
 								</form>
 							</div>
 						</div>
 					</div>
 				</div>
+				<script type="text/javascript">
+					document.getElementById("window").addEventListener("load",
+						function () {
+							var StockPrice = <?php echo "lol"; ?>;
+							console.log(StockPrice);
+						}
+					);
+				</script>
+				<script type="text/javascript" src="src/js/onStockChange.js"></script>
 			</body>
 		</html>
 		<?php
@@ -168,17 +213,24 @@
 		global $res;
 		if ($v == "grid") {
 			$i = 0;
-			echo "<div class='row'>";
+			?>
+				<div class="row">
+			<?php
 
 			while ($row = $res->fetch_assoc()) {
 				stockGrid($row);
 				$i++;
 
 				if (($i % 3) == 0) {
-					echo "</div>";
-					echo "<hr>";
+					?>
+						</div>
+						<hr>
+					<?php
 					if ($res->num_rows > $i) {
-						echo "<br><div class='row'>";
+						?>
+							<br>
+							<div class="row">
+						<?php
 					}
 				}
 			}
@@ -204,37 +256,10 @@
 										global $db;
 
 										// Current price
-										$CP = $db->query(
-											"SELECT price AS current_price
-											FROM stocks__history
-											WHERE stock = '" . $row["stock"] . "'
-											AND timing =
-												(SELECT MAX(timing)
-												FROM stocks__history
-												WHERE stock = '" . $row["stock"] . "'
-												)
-											GROUP BY stock"
-										);
-										$current_price = $CP->fetch_assoc()["current_price"];
+										$current_price = getStockCurrentPrice($row["stock"]);
 
 										// Previous price
-										$PP = $db->query(
-											"SELECT price AS previous_price
-											FROM stocks__history
-											WHERE stock = '" . $row["stock"] . "'
-											AND timing =
-												(SELECT MAX(timing)
-												FROM stocks__history
-												WHERE stock = '" . $row["stock"] . "'
-												AND timing <
-													(SELECT MAX(timing)
-													FROM stocks__history
-													WHERE stock = '" . $row["stock"] . "'
-													)
-												)
-											GROUP BY stock"
-										);
-										$previous_price = $PP->fetch_assoc()["previous_price"];
+										$previous_price = getStockPreviousPrice($row["stock"]);
 
 										// Volume traded today
 										$V = $db->query(
