@@ -1,6 +1,5 @@
 <?php
-    require "core.php";
-    _header();
+    require_once "core.php";
 	global $db;
 
 	// Move this to a template?

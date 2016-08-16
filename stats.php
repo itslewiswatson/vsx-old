@@ -1,5 +1,3 @@
 <?php
-    require "core.php";
-
-    _footer();
+    require_once "core.php";
 ?>

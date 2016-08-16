@@ -1,17 +1,7 @@
 <?php
-    require "core.php";
-    _header();
+    require_once "core.php";
+    require_once "profile_util.php";
     global $db;
-
-    function isUserSelf($usr) {
-        if (!isset($_SESSION["usr"])) {
-            return false;
-        }
-        if ($usr == $_SESSION["usr"]) {
-            return true;
-        }
-        return false;
-    }
 
 	// Check for actions
     if ($_GET && $_GET["u"] && isset($_GET["u"])) {
@@ -20,7 +10,6 @@
         }
         else {
             echo "You must be logged in to view user profiles";
-            _footer();
             exit;
         }
     }
@@ -30,7 +19,6 @@
         }
         else {
             echo "You must be logged in to view user profiles";
-            _footer();
             exit;
         }
     }

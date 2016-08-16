@@ -1,5 +1,5 @@
 <?php
-	require "core.php";
+	require_once "core.php";
 	ob_start();
 
 	function authenticate($usr, $pw) {
