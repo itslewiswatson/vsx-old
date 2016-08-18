@@ -37,22 +37,31 @@
 
 		// Check if we have any post data about buying
 		if (isset($_POST["buy"]) || isset($_POST["sell"])) {
-			// require profile utils
 			if (isset($_POST["buy"])) {
 				$amount = $_POST["buy"];
 				$amount = numerise($amount);
 				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
-					echo "Enter the correct fuggen input";
+					?>
+						<div class="col-md-4 col-md-offset-4">
+							<div class="alert alert-danger text-center" role="alert">Incorrect input received - click <a href="stocks.php?stock=<?php echo $stock; ?>">here</a> to go back!</div>
+						</div>
+					<?
 					exit;
 				}
+				
 			}
 			elseif (isset($_POST["sell"])) {
 				$amount = $_POST["sell"];
 				$amount = numerise($amount);
 				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
-					echo "Enter the correct fuggen input";
+					?>
+						<div class="col-md-4 col-md-offset-4">
+							<div class="alert alert-danger text-center" role="alert">Incorrect input received - click <a href="stocks.php?stock=<?php echo $stock; ?>">here</a> to go back!</div>
+						</div>
+					<?
 					exit;
 				}
+				
 			}
 			exit;
 		}
@@ -65,7 +74,6 @@
 			<script type="text/javascript">
 				google.charts.load('current', {packages: ['corechart', 'line']});
 				google.charts.setOnLoadCallback(drawLogScales);
-				//google.charts.setOnLoadCallback(drawCrosshairs);
 
 				function drawLogScales() {
 				  	var data = new google.visualization.DataTable();
@@ -108,16 +116,6 @@
 			<link rel="stylesheet" type="text/css" href="src/css/custom.css"/>
 			<title><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?> - VSX</title>
 			<body>
-				<!--
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-md-6 col-md-offset-3">
-							<h1 class="text-center"><?php echo $stockData["company_name"] . " (" . $stock . ")"; ?></h1>
-						</div>
-					</div>
-					<hr>
-				</div>
-				-->
 				<div class="container">
 					<div class="row">
 						<div class="col-md-4 avatar-display">
@@ -185,10 +183,10 @@
 					</div>
 				</div>
 				<script type="text/javascript">
-					document.getElementById("window").addEventListener("load",
+					window.addEventListener("load",
 						function () {
-							var StockPrice = <?php echo "lol"; ?>;
-							console.log(StockPrice);
+							stockPrice = '<?php echo getStockCurrentPrice($stockData["stock"]); ?>';
+							//console.log(StockPrice);
 						}
 					);
 				</script>
