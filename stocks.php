@@ -13,56 +13,30 @@
 	if (isset($_GET["stock"])) {
 		$stock = $_GET["stock"];
 		$stock = str_clean($_GET["stock"]);
+		$stock = strtoupper($stock);
 
 		$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock AND stocks__.stock = '" . $stock . "'");
 		$stockData = $res->fetch_assoc();
 
 		// If we cannot find anything
-		if ($res->num_rows == 0) {
+		if (!$res || $res->num_rows == 0 || !$stockData["stock"]) {
 			?>
-			<title>Not found (404) - VSX</title>
-			<body>
-				<div class="container-fluid">
-					<div class="row">
-						<div class="text-center">
-							<h1>404 - This stock cannot be found :(</h1>
-							<p>It looks like there is no stock matching '<?php echo $stock; ?>'. Click <a href="stocks.php">here</a> to view all stocks.</p>
+				<title>Not found (404) - VSX</title>
+				<body>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="text-center">
+								<?php
+								errorVSX("
+									<h2>404 - This stock cannot be found :(</h2>
+									<p>It looks like there is no stock matching '" . $stock . "'. Click <a href='stocks.php'>here</a> to view all stocks.</p>
+								");
+								?>
+							</div>
 						</div>
 					</div>
-				</div>
-			</body>
+				</body>
 			<?php
-			exit;
-		}
-
-		// Check if we have any post data about buying
-		if (isset($_POST["buy"]) || isset($_POST["sell"])) {
-			if (isset($_POST["buy"])) {
-				$amount = $_POST["buy"];
-				$amount = numerise($amount);
-				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
-					?>
-						<div class="col-md-4 col-md-offset-4">
-							<div class="alert alert-danger text-center" role="alert">Incorrect input received - click <a href="stocks.php?stock=<?php echo $stock; ?>">here</a> to go back!</div>
-						</div>
-					<?
-					exit;
-				}
-				
-			}
-			elseif (isset($_POST["sell"])) {
-				$amount = $_POST["sell"];
-				$amount = numerise($amount);
-				if (!$amount || strlen($amount) == 0 || !(int)$amount) {
-					?>
-						<div class="col-md-4 col-md-offset-4">
-							<div class="alert alert-danger text-center" role="alert">Incorrect input received - click <a href="stocks.php?stock=<?php echo $stock; ?>">here</a> to go back!</div>
-						</div>
-					<?
-					exit;
-				}
-				
-			}
 			exit;
 		}
 
@@ -130,6 +104,32 @@
 							</div>
 						</div>
 						<div class="col-md-8">
+							<?php
+							// Check if we have any post data about buying
+							// Let's also keep this on the main page, thanks to our friend 'goto'
+							if (isset($_POST["buy"]) || isset($_POST["sell"])):
+								if (!isLoggedIn()) {
+									errorVSX("You must be logged in to buy or sell stocks - <a href=login.php>login</a> or <a href=register.php>sign up</a>!");
+									//exit;
+									goto end;
+								}
+								if (isset($_POST["buy"])) {
+									$amount = $_POST["buy"];
+									$amount = numerise($amount);
+									if (!$amount || strlen($amount) == 0 || !(int)$amount) {
+										errorVSX("<h4>Oops, we don't recognise that :(</h4> Please enter a valid number!");
+									}
+								}
+								elseif (isset($_POST["sell"])) {
+									$amount = $_POST["sell"];
+									$amount = numerise($amount);
+									if (!$amount || strlen($amount) == 0 || !(int)$amount) {
+										errorVSX("<h4>Oops, we don't recognise that :(</h4> Please enter a valid number!");
+									}
+								}
+							endif;
+							end:
+							?>
 							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
 							<div id="chart_div">
 								<!-- Blank div for the graph -->
@@ -322,18 +322,18 @@
 	</style>
 	<title>Stocks - VSX</title>
 	<body>
-		<div class="container-fluid">
+		<div class="container">
 			<div class="row">
 				<div class="col-md-6 col-md-offset-3">
-					<h1 class="text-center">Stocks</h1>
+					<h2 class="text-center">Stocks</h2>
 				</div>
-				<div class="btn-group" role="group">
+				<div class="btn-group pull-right" role="group">
 			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
 			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
 			    </div>
 			</div>
-			<hr>
 		</div>
+		<br>
 		<div class="container">
 			<?php
 				drawStocks($view);
