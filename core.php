@@ -40,16 +40,15 @@
 			}
 
 			window.onload = function () {
-				document.getElementById("right-navbar").innerHTML = "";
-				var u = "" + String(<?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'N/A'"; echo strval($s); ?>) + "";
+				var u = String(<?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'N/A'"; echo strval($s); ?>);
 				var loggedIn = <?php isset($_SESSION["usr"]) ? $s = 1 : $s = 0; echo $s; ?>;
 				var list = "";
 				if (loggedIn == 0) {
-					list += '<li id="register_btn"><a href="register.php">Register</a></li>';
-					list += '<li id="login_btn"><a href="login.php">Login</a></li>';
+					list += '<li><a href="register.php">Register</a></li>';
+					list += '<li><a href="login.php">Login</a></li>';
 				}
 				else if (loggedIn == 1) {
-					list += '<li id="logged_in_btn" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + "" + u + "" + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
+					list += '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + u + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
 				}
 				document.getElementById("right-navbar").innerHTML = list;
 				footer();
