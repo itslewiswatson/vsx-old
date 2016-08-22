@@ -2,6 +2,14 @@
     require_once "core.php";
 	global $db;
 
+	if (!isLoggedIn()) {
+		?>
+			<title>Members- VSX</title>
+		<?php
+		errorVSX("You must be logged in to view the member list - <a href=login.php>login</a> or <a href=register.php>sign up</a>!", 40);
+		exit;
+	}
+
     $fields = array(
 		"usr",
 		"DATE_FORMAT(registered_on, '%d-%m-%Y') AS registered_on",
