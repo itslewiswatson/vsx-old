@@ -128,7 +128,7 @@
         "SELECT stock, qty, action
         FROM stocks__transactions
         WHERE usr = '" . $profile . "'
-        AND (UNIX_TIMESTAMP(DATE(timing)) - UNIX_TIMESTAMP()) <= 259200
+        AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(DATE(timing))) <= 259200
         LIMIT 3"
     );
     //$recent_activity =
@@ -244,7 +244,7 @@
                                     while ($activity = $q7->fetch_assoc()) {
                                         $action = $activity["action"] == "B" ? "purchased" : "sold";
                                         ?>
-                                            <p>Recently <?php echo $action; ?> <strong><?php echo $activity["qty"]; ?></strong> shares of <strong><a href=<?php echo "stocks.php?stock=" . $activity["stock"]; ?> target="_blank"><?php echo $activity["stock"]; ?></a></strong></p>
+                                            <p>Recently <?php echo $action; ?> <strong><?php echo $activity["qty"]; ?></strong> share(s) of <strong><a href=<?php echo "stocks.php?stock=" . $activity["stock"]; ?> target="_blank"><?php echo $activity["stock"]; ?></a></strong></p>
                                         <?php
                                     }
                                 }
