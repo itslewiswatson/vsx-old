@@ -9,7 +9,7 @@
             $profile = $_GET["u"];
         }
         else {
-            echo "You must be logged in to view user profiles";
+            errorVSX("You must be logged in to view user profiles - <a href=login.php>login</a> or <a href=register.php>sign up</a>!", 40);
             exit;
         }
     }
@@ -18,7 +18,7 @@
             $profile = $_SESSION["usr"];
         }
         else {
-            echo "You must be logged in to view user profiles";
+            errorVSX("You must be logged in to view user profiles - <a href=login.php>login</a> or <a href=register.php>sign up</a>!", 40);
             exit;
         }
     }
@@ -45,11 +45,11 @@
 	);
 	// Don't do the extra queries if they don't need to be done
     if (!$userData) {
-        echo "VSX has encountered an internal error";
+        errorVSX("VSX has encountered an internal error", 40);
         exit;
     }
-	if ($userData->num_rows == 0) {
-        echo "We could not find a user with this name";
+	if (!$userData || $userData->num_rows == 0) {
+    	errorVSX("We could not find a user with this name", 40);
         exit;
     }
     $result = $userData->fetch_assoc();
