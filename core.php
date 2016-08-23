@@ -40,15 +40,20 @@
 			}
 
 			window.onload = function () {
-				var u = String(<?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'N/A'"; echo strval($s); ?>);
+				var u = <?php isset($_SESSION["usr"]) ? $s = "'" . $_SESSION["usr"] . "'" : $s = "'N/A'"; echo strval($s); ?>;
 				var loggedIn = <?php isset($_SESSION["usr"]) ? $s = 1 : $s = 0; echo $s; ?>;
+                var credits = <?php
+                    require_once("profile_util.php");
+                    isset($_SESSION["usr"]) ? $credits = "'" . number_format(getUserCredits($_SESSION["usr"]), 2) . "'" : $credits = "'lo'";
+                    echo $credits;
+                ?>;
 				var list = "";
 				if (loggedIn == 0) {
 					list += '<li><a href="register.php">Register</a></li>';
 					list += '<li><a href="login.php">Login</a></li>';
 				}
 				else if (loggedIn == 1) {
-					list += '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + u + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a href="profile.php">Profile</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
+					list += '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + u + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a>Credits: $' + credits +  '</a></li><li class="divider"></li><li><a href="profile.php">Profile</a></li><li><a href="transactions.php">Transactions</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
 				}
 				document.getElementById("right-navbar").innerHTML = list;
 				footer();
@@ -79,13 +84,28 @@
 				<div class="container-fluid">
 					<div class="row">
 						<div style="text-align: center; width: <?php echo $width; ?>%; margin: 0 auto;">
-							<div class="alert alert-danger text-center errorVSX" role="alert"><?php echo $var; ?></div>
+							<div class="alert alert-danger text-center vsx-message" role="alert"><?php echo $var; ?></div>
 						</div>
 					</div>
 				</div>
 			</body>
 		<?php
 	}
+
+    function successVSX($var, $width = 70) {
+        ?>
+            <link rel="stylesheet" type="text/css" href="src/css/custom.css"/>
+            <body>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div style="text-align: center; width: <?php echo $width; ?>%; margin: 0 auto;">
+                            <div class="alert alert-success text-center vsx-message" role="alert"><?php echo $var; ?></div>
+                        </div>
+                    </div>
+                </div>
+            </body>
+        <?php
+    }
 
 	ob_end_flush();
 ?>
