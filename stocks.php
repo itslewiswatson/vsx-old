@@ -94,13 +94,26 @@
 					<div class="row">
 						<div class="col-md-4 avatar-display">
 							<div class="thumbnail profile">
+                                <!-- Company profile -->
 								<img src=<?php echo $stockData["company_logo"]; ?>>
 								<hr>
-								<div style="padding-right: 10px; padding-left: 10px">
+								<div style="padding-right: 10px; padding-left: 10px;">
 									<h3><?php echo $stockData["stock"]; ?></h3>
 									<h5><?php echo $stockData["company_name"]; ?></h3>
 									<p><?php echo $stockData["company_bio"]; ?></p>
 								</div>
+                                <hr>
+                                <!-- Stock statistics -->
+                                <div style="padding-right: 10px; padding-left: 10px;">
+                                    <p><strong>Average Price(s):</strong></p>
+                                    <ul>
+                                        <li>Daily: <?php echo getStockAverage($stockData["stock"], "day"); ?></li>
+                                        <li>Weekly: <?php echo getStockAverage($stockData["stock"], "week"); ?></li>
+                                        <li>Monthly: <?php echo getStockAverage($stockData["stock"], "month"); ?></li>
+                                        <li>Annually: <?php echo getStockAverage($stockData["stock"], "year"); ?></li>
+                                        <li>All-time: <?php echo getStockAverage($stockData["stock"], "all"); ?></li>
+                                    </ul>
+                                </div>
 							</div>
 						</div>
 						<div class="col-md-8">
@@ -110,7 +123,6 @@
 							if (isset($_POST["buy"]) || isset($_POST["sell"])):
 								if (!isLoggedIn()) {
 									errorVSX("You must be logged in to buy or sell stocks - <a href=login.php>login</a> or <a href=register.php>sign up</a>!");
-									//exit;
 									goto end;
 								}
 								if (isset($_POST["buy"])) {
@@ -118,14 +130,26 @@
 									$amount = numerise($amount);
 									if (!$amount || strlen($amount) == 0 || !(int)$amount) {
 										errorVSX("<h4>Oops, we don't recognise that :(</h4> Please enter a valid number!");
+                                        goto end;
 									}
+                                    $amount = (int)$amount;
+                                    $buy = buyStock($_SESSION["usr"], $stockData["stock"], $amount);
+                                    if ($buy !== true) {
+                                        errorVSX($buy);
+                                    }
+                                    else {
+                                        successVSX("You have successfully bought ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($amount, 2));
+                                    }
 								}
 								elseif (isset($_POST["sell"])) {
 									$amount = $_POST["sell"];
 									$amount = numerise($amount);
 									if (!$amount || strlen($amount) == 0 || !(int)$amount) {
 										errorVSX("<h4>Oops, we don't recognise that :(</h4> Please enter a valid number!");
+                                        goto end;
 									}
+                                    $amount = (int)$amount;
+
 								}
 							endif;
 							end:
@@ -205,7 +229,12 @@
 		// List otherwise
 	}
 
-	$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock GROUP BY stocks__.stock");
+	$res = $db->query(
+        "SELECT " . implode(", ", $fields) . "
+        FROM stocks__, stocks__history
+        WHERE stocks__.stock = stocks__history.stock
+        GROUP BY stocks__.stock"
+    );
 
 	function drawStocks($v = "list") {
 		global $res;
