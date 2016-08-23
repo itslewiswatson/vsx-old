@@ -123,12 +123,13 @@
 	$total_investments = $q6->fetch_assoc()["price"];
 
     // Recent activity
-    // Checks for activity in past 3 days
+    // Checks for activity in past 3 days and groups together stocks
     $q7 = $db->query(
-        "SELECT stock, qty, action
+        "SELECT stock, SUM(qty) AS qty, action
         FROM stocks__transactions
         WHERE usr = '" . $profile . "'
         AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(DATE(timing))) <= 259200
+        GROUP BY stock
         LIMIT 3"
     );
     //$recent_activity =
