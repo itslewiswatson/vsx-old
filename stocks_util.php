@@ -75,15 +75,44 @@
         return $previous_price;
     }
 
+    function getStockAverage($stock, $period) {
+        $periods = array(
+            "day" => "(UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timing)) <= (60 * 60 * 24)",
+            "week" => "(UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timing)) <= (60 * 60 * 24 * 7)",
+            "month" => "(UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timing)) <= (60 * 60 * 24 * 7 * (SELECT DAY(LAST_DAY(CURDATE()))))",
+            "year" => "(UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timing)) <= (60 * 60 * 24 * (SELECT DAYOFYEAR(CURDATE())))",
+            "all" => "1 = 1" // lol
+        );
+        $timing = $periods[$period];
+        global $db;
+        $q = $db->query(
+            "SELECT AVG(price) AS average
+            FROM stocks__history
+            WHERE stock = '" . $stock . "'
+            AND " . $timing . "
+            GROUP BY stock
+            LIMIT 1"
+        );
+        $average = $q->fetch_assoc()["average"];
+        if (!$average) {
+            $average = "Not found";
+        }
+        else {
+            $average = "$" . number_format($average, 2);
+        }
+        return $average;
+    }
+
 	// Needs a can user buy stock function
 	function buyStock($usr, $stock, $qty) {
 		global $db;
 		require_once "profile_util.php";
 		// Check if they can buy stock in the first place
 		$price = $qty * getStockCurrentPrice($stock);
-		if ($price > getUserCredits($usr)) {
+        $credits = getUserCredits($usr);
+		if ($price > $credits) {
 			// Can't buy stock because the price is too high
-			return false;
+			return "Insufficient funds - you need $" . number_format($price - $credits, 2);
 		}
 
 		// Check if user already downs stock
@@ -101,6 +130,10 @@
 		$transac = $db->prepare("INSERT INTO stocks__transactions (usr, stock, timing, qty, total_price, action) VALUES (?, ?, CURRENT_TIMESTAMP(), ?, ?, 'B')");
 		$transac->bind_param("ssid", $usr, $stock, $qty, $price);
 		$transac->execute();
+
+        $subtrac = $db->prepare("UPDATE users SET credits = credits - ? WHERE usr = ?");
+        $subtrac->bind_param("is", $price, $usr);
+        $subtrac->execute();
 
 		return true;
 	}
