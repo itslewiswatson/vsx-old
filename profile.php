@@ -112,6 +112,27 @@
 		*/
 	}
 
+	// q5 is no longer used, use it here
+	// Current returns
+	$q5 = $db->query("
+		SELECT (
+			(
+				SELECT SUM(total_price)
+				FROM stocks__transactions
+				WHERE action = 'B'
+				AND usr = '" . $profile . "'
+			)
+			-
+			(
+				SELECT SUM(total_price)
+				FROM stocks__transactions
+				WHERE action = 'S'
+				AND usr = '" . $profile . "'
+			)
+		) AS price
+	");
+	$current_returns = $q5->fetch_assoc()["price"];
+
 	// Total investments
 	$q6 = $db->query(
 		"SELECT SUM(total_price) AS price
@@ -129,10 +150,10 @@
         FROM stocks__transactions
         WHERE usr = '" . $profile . "'
         AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(DATE(timing))) <= 259200
-        GROUP BY stock
+        GROUP BY stock, action
+		ORDER BY timing DESC
         LIMIT 3"
     );
-    //$recent_activity =
 
     // Current value of all stocks they own
     $q8 = $db->query(
@@ -230,7 +251,8 @@
                             <hr>
 							<h3>Monetary</h3>
                             <p><strong>Total Invested:</strong> $<?php echo number_format($total_investments, 2); ?></p>
-                            <p><strong>Current Returns:</strong> $<?php echo number_format($total_value, 2); ?></p>
+                            <p><strong>Current Value:</strong> $<?php echo number_format($total_value, 2); ?></p>
+							<p><strong>Current Returns:</strong> $<?php echo number_format($current_returns, 2); ?></p>
 							<!--<p>Profit Loss:</p>-->
                             <hr>
                             <h3>Recent Activity</h3>
