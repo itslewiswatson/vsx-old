@@ -9,9 +9,9 @@
 	include "src/templates/header.html";
 
 	global $db;
-	$db = new mysqli("localhost", "root", "", "vsx");
-	if (!$db) {
-		die("Failed to connect to the database");
+	@$db = new mysqli("localhost", "root", "", "vsx");
+	if (!$db || $db->connect_errno) {
+		errorVSX("Failed to connect to the database (Error: " . $db->connect_errno . ")");
 	}
 
 	function updateUser() {
