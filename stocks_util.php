@@ -104,7 +104,7 @@
     }
 
 	// Needs a can user buy stock function
-	function buyStock($usr, $stock, $qty) {
+	function buyUserStock($usr, $stock, $qty) {
 		global $db;
 		require_once "profile_util.php";
 		// Check if they can buy stock in the first place
@@ -135,6 +135,37 @@
         $subtrac->bind_param("is", $price, $usr);
         $subtrac->execute();
 
+		return true;
+	}
+	
+	function sellUserStock($usr, $stock, $qty) {
+		global $db;
+		
+		$check = $db->query("SELECT amount FROM stocks__holders WHERE usr = '" . $usr . "' AND stock = '" . $stock . "' LIMIT 1");
+		if ($check->num_rows == 0) {
+			return "You do not own any shares in this company";
+		}
+		$amount = $check->fetch_assoc()["amount"];
+		if ($amount == 0) {
+			$db->query("DELETE FROM stocks__holders WHERE usr = '" . $usr . "' AND stock = '" . $stock . "'");
+		}
+		else {
+			$change = $db->prepare("UPDATE stocks__holders SET amount = amount - ? WHERE usr = ? AND stock = ?");
+			$change->bind_param("iss", $qty, $usr, $stock);
+			$change->execute();
+		}
+		
+		$price = getStockCurrentPrice($stock);
+		$price = $price * $qty;
+		
+		$transac = $db->prepare("INSERT INTO stocks__transactions (usr, stock, timing, qty, total_price, action) VALUES (?, ?, CURRENT_TIMESTAMP(), ?, ?, 'S')");
+		$transac->bind_param("ssid", $usr, $stock, $qty, $price);
+		$transac->execute();
+		
+		$subtrac = $db->prepare("UPDATE users SET credits = credits + ? WHERE usr = ?");
+        $subtrac->bind_param("is", $price, $usr);
+        $subtrac->execute();
+		
 		return true;
 	}
 ?>
