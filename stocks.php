@@ -133,7 +133,7 @@
                                         goto end;
 									}
                                     $amount = (int)$amount;
-                                    $buy = buyStock($_SESSION["usr"], $stockData["stock"], $amount);
+                                    $buy = buyUserStock($_SESSION["usr"], $stockData["stock"], $amount);
                                     if ($buy !== true) {
                                         errorVSX($buy);
                                     }
@@ -149,7 +149,13 @@
                                         goto end;
 									}
                                     $amount = (int)$amount;
-
+									$sell = sellUserStock($_SESSION["usr"], $stockData["stock"], $amount);
+									if ($sell !== true) {
+										errorVSX($sell);
+									}
+									else {
+										successVSX("You have successfully sold ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($amount, 2));
+									}
 								}
 							endif;
 							end:
