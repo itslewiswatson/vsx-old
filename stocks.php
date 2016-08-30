@@ -190,7 +190,7 @@
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
 											<!--<div class="input-group-addon">$</div>-->
-											<input type="text" id="buy" name="buy" class="form-control" placeholder="Quantity">
+											<input type="number" id="buy" name="buy" class="form-control" placeholder="Quantity">
 										</div>
 									</div>
 									<p id="buy-text"></p>
@@ -202,7 +202,7 @@
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
 											<!--<div class="input-group-addon">$</div>-->
-											<input type="text" id="sell" name="sell" class="form-control" placeholder="Quantity">
+											<input type="number" id="sell" name="sell" class="form-control" placeholder="Quantity">
 										</div>
 									</div>
 									<p id="sell-text"></p>
