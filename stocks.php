@@ -57,7 +57,7 @@
 					data.addRows([
 						<?php
 							$rsq = $db->query(
-								"SELECT UNIX_TIMESTAMP(timing) AS timing2, price
+								"SELECT UNIX_TIMESTAMP(timing) * 1000 AS timing2, price
 								FROM stocks__history
 								WHERE stock = '" . $stock . "'
 								ORDER BY timing2 ASC
@@ -65,10 +65,10 @@
 							);
 							while ($row = $rsq->fetch_assoc()) {
 								// JavaScript works in milliseconds instead of normal seconds.
-								echo "[new Date(" . $row["timing2"] * 1000 . "), " . $row["price"] . "],\n";
+								echo "[new Date(" . $row["timing2"] . "), " . $row["price"] . "],\n";
 							}
 						?>
-			      	]);
+					]);
 
 				  	var options = {
 						hAxis: {
