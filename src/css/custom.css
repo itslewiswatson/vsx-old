@@ -12,3 +12,24 @@
 .vsx-message {
     margin: 10px 0 0 0;
 }
+
+@media (min-width: 768px) {
+	.container2 {
+		width: 95%;
+	}
+}
+@media (min-width: 992px) {
+	.container2 {
+		width: 75%;
+	}
+}
+@media (min-width: 1200px) {
+	.container2 {
+		width: 95%;
+	}
+}
+@media (min-width: 1600px) {
+	.container2 {
+		width: 75%;
+	}
+}
