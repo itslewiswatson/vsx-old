@@ -217,10 +217,7 @@
 									<hr>
 									<div class="btn-group btn-group-justified" role="group" aria-label="...">
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-default">Edit profile</button>
-										</div>
-										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-default">Edit account</button>
+											<button type="button" class="btn btn-default">Edit Settings</button>
 										</div>
 									</div>
 									<?php
