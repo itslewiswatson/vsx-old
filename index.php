@@ -1,24 +1,47 @@
 <?php
 	require_once "core.php";
-	ob_start();
-	buttons();
+    require_once "stocks_util.php";
+    global $db;
 
-	function celebrate() {
-		?>
-		<div class="container">
-			<div class="row">
-				<div class="text-center col-md-6 col-md-offset-3">
-					<p><?php echo "Welcome, " . $_SESSION["usr"]; ?></p>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
-
-	if (isset($_SESSION["usr"])) {
-		celebrate();
-	}
-
-	_footer();
-	ob_end_flush();
+    // Trending stock
+    $trending = $db->query(
+        "SELECT stock
+        FROM stocks__
+        ORDER BY RAND()
+        LIMIT 10"
+    );
+    ?>
+        <html>
+            <title>Index - VSX</title>
+            <body>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2 col-xs-4">
+                            <div class="thumbnail">
+                                <h4 class="text-center">Trending Stock</h4>
+                                <table class="table table-hover">
+                                    <tr>
+                                        <th>Stock</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    <?php
+                                        while ($row = $trending->fetch_assoc()) {
+                                            echo "<tr>
+                                                <td>" . $row["stock"] . "</td>
+                                                <td>$" . number_format(getStockCurrentPrice($row["stock"]), 2) . "</td>
+                                            </tr>";
+                                        }
+                                    ?>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-4 pull-right">
+                            <div class="thumbnail">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </html>
+    <?php
 ?>
