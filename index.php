@@ -190,8 +190,8 @@
 	);
 
 	$vol = $db->query(
-		"SELECT SUM(qty) AS volume, stock
-		FROM stocks__transactions
+		"SELECT (SELECT COALESCE(SUM(qty), 0) FROM stocks__transactions WHERE stock = A.stock) AS volume, stock
+		FROM stocks__ A
 		GROUP BY stock
 		ORDER BY volume DESC
 		LIMIT 6"
