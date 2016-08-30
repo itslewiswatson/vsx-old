@@ -199,9 +199,10 @@
 
     ?>
         <html>
-            <title>Index - VSX</title>
+        	<title>Index - VSX</title>
+			<link rel="stylesheet" type="text/css" href="src/css/custom.css"/>
             <body>
-                <div class="container">
+                <div class="container-fluid container2">
 					<div class="row">
 						<div class="text-center">
 							<h3>
