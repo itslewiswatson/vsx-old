@@ -20,7 +20,7 @@
 }
 @media (min-width: 992px) {
 	.container2 {
-		width: 75%;
+		width: 95%;
 	}
 }
 @media (min-width: 1200px) {
@@ -32,4 +32,8 @@
 	.container2 {
 		width: 75%;
 	}
+}
+
+.container2 table {
+	word-wrap: break-word;
 }
