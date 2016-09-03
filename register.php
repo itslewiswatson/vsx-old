@@ -1,4 +1,4 @@
-<?php
+<?php 
 	require_once "core.php";
 
 	function isAccount($usr = NULL, $email = NULL) {
