@@ -6,6 +6,7 @@
 	session_start();
 
 	ob_start();
+	
 	include "src/templates/header.html";
 
 	global $db;
@@ -106,6 +107,4 @@
             </body>
         <?php
     }
-
-	ob_end_flush();
 ?>
