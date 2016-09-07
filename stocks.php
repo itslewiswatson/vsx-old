@@ -216,7 +216,6 @@
 					window.addEventListener("load",
 						function () {
 							stockPrice = '<?php echo getStockCurrentPrice($stockData["stock"]); ?>';
-							//console.log(StockPrice);
 						}
 					);
 				</script>
@@ -228,19 +227,104 @@
 	}
 
 	$view = "list";
-	if ($_GET && $_GET["view"] && isset($_GET["view"])) {
+	if (isset($_GET["view"])) {
 		if (strtolower($_GET["view"]) == "grid") {
 			$view = "grid";
 		}
 		// List otherwise
 	}
 
+	$qStock = "1 = 1";
+	if (isset($_GET["q"])  && $_GET["q"] !== "") {
+		$qStock = $_GET["q"];
+		$qStock = "stocks__.stock LIKE '%" . str_clean($qStock) . "%'";
+	}
+
+	$sort = "stock";
+	$order = "ASC";
+	if (isset($_GET["sort"]) && $_GET["sort"] !== "") {
+		if (!empty($_GET["order"])) {
+			$order = strtoupper(str_clean($_GET["order"]));
+		}
+		$sort = strtolower(str_clean($_GET["sort"]));
+		if ($sort === "stock") {
+			$sort = "stocks__.stock";
+		}
+	}
+
 	$res = $db->query(
         "SELECT " . implode(", ", $fields) . "
         FROM stocks__, stocks__history
         WHERE stocks__.stock = stocks__history.stock
-        GROUP BY stocks__.stock"
+		AND " . $qStock . "
+        GROUP BY stocks__.stock
+		ORDER BY " . $sort . " " . $order
     );
+
+	?>
+		<style>
+			img {
+				max-width: 50%;
+				max-height: 50%;
+			}
+		</style>
+		<title>Stocks - VSX</title>
+		<body>
+			<br>
+			<div class="container text-center">
+				<div class="row">
+					<div class="pull-left">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
+							<button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
+						</div>
+					</div>
+					<div class="col-md-4 col-md-offset-3 col-sm-4 col-sm-offset-4 col-xs-6 col-xs-offset-3">
+						<nobr><h2 style="display: inline; vertical-align: middle;">Stocks</h2></nobr>
+					</div>
+					<form class="form-inline" action="stocks.php" method="get">
+						<div class="form-group pull-right">
+							<div class="input-group">
+								<label class="sr-only">Search</label>
+								<?php
+									if (isset($_GET["q"]) && $_GET["q"] !== "") {
+										?>
+											<input type="text" name="q" class="form-control pull-right" placeholder="Search" value=<?php echo $_GET["q"]; ?>>
+										<?php
+									}
+									else {
+										?>
+											<input type="text" name="q" class="form-control pull-right" placeholder="Search">
+										<?php
+									}
+								?>
+								<span class="input-group-btn">
+									<button class="btn btn-default">
+										<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<br>
+			<div class="container">
+				<?php
+					if ($res->num_rows == 0) {
+						if ($qStock == "1 = 1") {
+							errorVSX("No stocks found in the database", 100);
+						}
+						else {
+							errorVSX("No stocks can be found from given search parameters. Click <a href='stocks.php'>here</a> to go back.", 100);
+						}
+						exit;
+					}
+					drawStocks($view);
+				?>
+			</div>
+		</body>
+	<?php
 
 	function drawStocks($v = "list") {
 		global $res;
@@ -248,6 +332,7 @@
 			$i = 0;
 			?>
 				<div class="row">
+					<hr>
 			<?php
 
 			while ($row = $res->fetch_assoc()) {
@@ -276,7 +361,7 @@
 						<div class="row">
 							<table class="table table-hover">
 								<tr>
-									<th>Stock</th>
+									<th><a href="stocks.php?sort=stock&order=<?php global $order; echo $order == "ASC" ? "DESC" : "ASC"; ?>">Stock</a></th>
 									<th>Company Name</th>
 									<th>Current Price</th>
 									<th>Previous Price</th>
@@ -347,31 +432,4 @@
 		</div>
 		<?php
 	}
-
-	?>
-	<style>
-		img {
-			max-width: 50%;
-			max-height: 50%;
-		}
-	</style>
-	<title>Stocks - VSX</title>
-	<body>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					<h2 class="text-center">Stocks</h2>
-				</div>
-				<div class="btn-group pull-right" role="group">
-			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=list';">List</button>
-			        <button type="button" class="btn btn-default" onclick="document.location = 'stocks.php?view=grid';">Grid</button>
-			    </div>
-			</div>
-		</div>
-		<br>
-		<div class="container">
-			<?php
-				drawStocks($view);
-			?>
-		</div>
-	</body>
+?>
