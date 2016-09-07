@@ -50,12 +50,12 @@
                                 <?php
                                     if (isset($i)) {
                                         ?>
-                                            <input type="text" name="q" class="form-control pull-right" placeholder="Search for..." value=<?php echo $i; ?>>
+                                            <input type="text" name="q" class="form-control pull-right" placeholder="Search" value=<?php echo $i; ?>>
                                         <?php
                                     }
                                     else {
                                         ?>
-                                            <input type="text" name="q" class="form-control pull-right" placeholder="Search for...">
+                                            <input type="text" name="q" class="form-control pull-right" placeholder="Search">
                                         <?php
                                     }
                                 ?>
@@ -130,6 +130,4 @@
 			</body>
 		</html>
 	<?php
-
-    _footer();
 ?>
