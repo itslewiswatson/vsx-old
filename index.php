@@ -205,17 +205,133 @@
                 <div class="container-fluid container2">
 					<div class="row">
 						<div class="text-center">
-							<h3>
+							<h2>
 								Virtual Stock Exchange<br>
 								<small>VSX is an online stock exchange that mimics behavior of real-life stock markets in an inconsequential environment.</small>
-							</h3>
+							</h2>
 						</div>
 					</div>
 					<hr>
 					<div class="row">
 						<?php
+							global $db;
 							if (isLoggedIn()) {
 								// Show recent activity on their stock
+								$usrStocks = $db->query("
+									SELECT X.stock,
+									(
+										SELECT price
+										FROM stocks__history B
+										WHERE A.stock = B.stock
+										AND timing = (
+											SELECT MAX(timing)
+											FROM stocks__history C
+											WHERE B.stock = C.stock
+											LIMIT 1
+										)
+									) AS curr,
+									(
+										SELECT price
+										FROM stocks__history B
+										WHERE A.stock = B.stock
+										AND timing = (
+											SELECT MAX(timing)
+											FROM stocks__history C
+											WHERE B.stock = C.stock
+											AND timing < (
+												SELECT MAX(timing)
+												FROM stocks__history D
+												WHERE C.stock = D.stock
+												LIMIT 1
+											)
+										)
+									) AS prev,
+									(
+										SELECT ROUND((CAST(curr AS SIGNED) - CAST(prev  AS SIGNED)) / CAST(curr AS SIGNED)  * 100, 2)
+									) AS diff,
+									(
+										SELECT DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y')
+										FROM stocks__history B
+										WHERE A.stock = B.stock
+									) AS last_updated,
+									(
+										(
+											SELECT COALESCE(SUM(total_price), 0)
+											FROM stocks__transactions G
+											WHERE action = 'B'
+											AND G.stock = A.stock
+											AND usr = '" . $_SESSION["usr"] . "'
+										)
+										-
+										(
+											SELECT COALESCE(SUM(total_price), 0)
+											FROM stocks__transactions G
+											WHERE action = 'S'
+											AND G.stock = A.stock
+											AND usr = '" . $_SESSION["usr"] . "'
+										)
+									) AS invested,
+									(
+										SELECT amount
+										FROM stocks__holders B
+										WHERE A.stock = B.stock
+										AND usr = '" . $_SESSION["usr"] . "'
+									) AS amount,
+									(
+										SELECT (amount * curr)
+										FROM stocks__holders B
+										WHERE A.stock = B.stock
+										AND usr = '" . $_SESSION["usr"] . "'
+									) AS curr_worth
+									FROM stocks__history A, stocks__holders X
+									WHERE A.stock = X.stock
+									AND usr = '" . $_SESSION["usr"] . "'
+									GROUP BY X.stock;
+								");
+
+								if (!$usrStocks || $usrStocks->num_rows == 0) {
+									?>
+										<div class="alert alert-info text-center" role="alert" style="margin: 0;">
+											You don't own any shares in any companies. Perhaps you should start investing? <a href="stocks.php">Click here to start investing.</a>
+										</div>
+									<?php
+								}
+								else {
+									?>
+										<table class="table table-hover">
+											<tr>
+												<th>Stock</th>
+												<th>Last Updated</th>
+												<th>Current Worth</th>
+												<th>Amount Invested</th>
+												<th>Quantity Owned</th>
+												<th>Current Price</th>
+												<th>Previous Price</th>
+												<th>Change</th>
+											</tr>
+											<?php
+												while ($row = $usrStocks->fetch_assoc()) {
+													?>
+														<tr>
+															<?php
+																echo "
+																	<td><a href='stocks.php?stock=" . $row["stock"] . "'>" . $row["stock"] . "</a></td>
+																	<td>" . $row["last_updated"] . "</td>
+																	<td>$" . number_format($row["curr_worth"], 2) . "</td>
+																	<td>$" . number_format($row["invested"], 2) . "</td>
+																	<td>" . number_format($row["amount"]) . "</td>
+																	<td>$" . number_format($row["curr"], 2) . "</td>
+																	<td>$" . number_format($row["prev"], 2) . "</td>
+																	<td><img src='" . ($row["diff"] >= 0 ? "src/images/up.gif" : "src/images/down.gif") . "'/> " . number_format($row["diff"], 2) . "%</td>
+																";
+															?>
+														</tr>
+													<?php
+												}
+											?>
+										</table>
+									<?php
+								}
 							}
 							else {
 								?>
