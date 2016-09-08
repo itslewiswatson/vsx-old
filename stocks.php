@@ -133,6 +133,10 @@
                                         goto end;
 									}
                                     $amount = (int)$amount;
+									if ($amount < 1) {
+										errorVSX("<h4>Oops, you can't use that number :(</h4> Please enter a valid number (hint: larger than 0)!");
+										goto end;
+									}
                                     $buy = buyUserStock($_SESSION["usr"], $stockData["stock"], $amount);
                                     if ($buy !== true) {
                                         errorVSX($buy);
@@ -149,6 +153,10 @@
                                         goto end;
 									}
                                     $amount = (int)$amount;
+									if ($amount < 1) {
+										errorVSX("<h4>Oops, you can't use that number :(</h4> Please enter a valid number (hint: larger than 0)!");
+										goto end;
+									}
 									$sell = sellUserStock($_SESSION["usr"], $stockData["stock"], $amount);
 									if ($sell !== true) {
 										errorVSX($sell);
@@ -189,8 +197,7 @@
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
-											<!--<div class="input-group-addon">$</div>-->
-											<input type="number" id="buy" name="buy" class="form-control" placeholder="Quantity">
+											<input type="number" id="buy" name="buy" class="form-control" placeholder="Quantity" required>
 										</div>
 									</div>
 									<p id="buy-text"></p>
@@ -201,8 +208,7 @@
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
-											<!--<div class="input-group-addon">$</div>-->
-											<input type="number" id="sell" name="sell" class="form-control" placeholder="Quantity">
+											<input type="number" id="sell" name="sell" class="form-control" placeholder="Quantity" required>
 										</div>
 									</div>
 									<p id="sell-text"></p>
