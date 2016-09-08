@@ -8,10 +8,10 @@
 					<p>Already have an account? <a href="login.php">Login</a></p>
 					<form action="register.php" method="POST" role="form">
 						<fieldset class="form-group">
-							<input name="username" type="text" class="form-control" id="username" placeholder="Username">
-							<input name="email" type="email" class="form-control" id="email" placeholder="Email">
-							<input name="passwd" type="password" class="form-control" id="passwd" placeholder="Password">
-							<input name="passwd_confirm" type="password" class="form-control" id="passwd_confirm" placeholder="Confirm Password">
+							<input name="username" type="text" class="form-control" id="username" placeholder="Username" required>
+							<input name="email" type="email" class="form-control" id="email" placeholder="Email" required>
+							<input name="passwd" type="password" class="form-control" id="passwd" placeholder="Password" required>
+							<input name="passwd_confirm" type="password" class="form-control" id="passwd_confirm" placeholder="Confirm Password" required>
 						</fieldset>
 						<button type="submit" class="btn btn-primary">Register</button>
 					</form>
