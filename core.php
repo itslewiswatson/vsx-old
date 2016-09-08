@@ -6,7 +6,7 @@
 	session_start();
 
 	ob_start();
-	
+
 	include "src/templates/header.html";
 
 	global $db;
@@ -54,7 +54,7 @@
 					list += '<li><a href="login.php">Login</a></li>';
 				}
 				else if (loggedIn == 1) {
-					list += '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + u + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a>Credits: $' + credits +  '</a></li><li class="divider"></li><li><a href="profile.php">Profile</a></li><li><a href="transactions.php">Transactions</a></li><li><a href="#">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
+					list += '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">' + u + '<span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li><a>Credits: $' + credits +  '</a></li><li class="divider"></li><li><a href="profile.php">Profile</a></li><li><a href="transactions.php">Transactions</a></li><li><a href="settings.php">Settings</a></li><li class="divider"></li><li><a href="logout.php">Logout</a></li></ul></li>';
 				}
 				document.getElementById("right-navbar").innerHTML = list;
 				footer();
