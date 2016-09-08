@@ -117,14 +117,14 @@
 	$q5 = $db->query("
 		SELECT (
 			(
-				SELECT SUM(total_price)
+				SELECT COALESCE(SUM(total_price), 0)
 				FROM stocks__transactions
 				WHERE action = 'B'
 				AND usr = '" . $profile . "'
 			)
 			-
 			(
-				SELECT SUM(total_price)
+				SELECT COALESCE(SUM(total_price), 0)
 				FROM stocks__transactions
 				WHERE action = 'S'
 				AND usr = '" . $profile . "'
@@ -157,10 +157,10 @@
 
     // Current value of all stocks they own
     $q8 = $db->query(
-        "SELECT SUM(qty * price) AS val
-        FROM stocks__history, stocks__transactions
+        "SELECT SUM(amount * price) AS val
+        FROM stocks__history, stocks__holders
         WHERE usr = '" . $profile . "'
-        AND stocks__history.stock = stocks__transactions.stock
+        AND stocks__history.stock = stocks__holders.stock
         AND stocks__history.timing = (
             SELECT MAX(stocks__history.timing)
             FROM stocks__transactions, stocks__history
@@ -214,10 +214,9 @@
 							<?php
 								if (isUserSelf($profile)) {
 									?>
-									<hr>
 									<div class="btn-group btn-group-justified" role="group" aria-label="...">
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-default">Edit Settings</button>
+											<a href="settings.php"><button type="button" class="btn btn-default">Edit Settings</button></a>
 										</div>
 									</div>
 									<?php
