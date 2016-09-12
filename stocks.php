@@ -138,11 +138,12 @@
 										goto end;
 									}
                                     $buy = buyUserStock($_SESSION["usr"], $stockData["stock"], $amount);
+									$price = $amount * getStockCurrentPrice($stockData["stock"]);
                                     if ($buy !== true) {
                                         errorVSX($buy);
                                     }
                                     else {
-                                        successVSX("You have successfully bought ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($amount, 2));
+                                        successVSX("You have successfully bought ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($price, 2));
                                     }
 								}
 								elseif (isset($_POST["sell"])) {
@@ -158,11 +159,12 @@
 										goto end;
 									}
 									$sell = sellUserStock($_SESSION["usr"], $stockData["stock"], $amount);
+									$price = $amount * getStockCurrentPrice($stockData["stock"]);
 									if ($sell !== true) {
 										errorVSX($sell);
 									}
 									else {
-										successVSX("You have successfully sold ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($amount, 2));
+										successVSX("You have successfully sold ". $amount . " share(s) of " . $stockData["stock"] . " for $" . number_format($price, 2));
 									}
 								}
 							endif;
@@ -185,8 +187,9 @@
 									}
 									$current_price = getStockCurrentPrice($stockData["stock"]);
 									$value = $current_price * $owned_amount;
+									$digits = strlen(substr(strrchr($division * 100, "."), 1));
 									?>
-										<p class="text-center">You currently own <strong><?php echo $owned_amount; ?></strong> (<?php echo round(($division) * 100, 2) ?>%) of <strong><?php echo $stockData["stock"]; ?></strong>, valued at <strong>$<?php echo number_format($value, 2); ?></strong></p>
+										<p class="text-center">You currently own <strong><?php echo $owned_amount; ?></strong> (<?php echo number_format($division * 100, $digits) ?>%) of <strong><?php echo $stockData["stock"]; ?></strong>, valued at <strong>$<?php echo number_format($value, 2); ?></strong></p>
 										<hr>
 									<?php
 								}
