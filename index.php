@@ -21,15 +21,17 @@
 	);
 
 	$total = $db->query(
-		"SELECT A.stock AS stock, total_options * (
-												SELECT price
-												FROM stocks__history
-												WHERE stock = A.stock
-												AND timing = (
-													SELECT MAX(timing)
-													FROM stocks__history
-													WHERE stock = A.stock
-												)) AS value
+		"SELECT A.stock AS stock, total_options *
+		(
+			SELECT price
+			FROM stocks__history
+			WHERE stock = A.stock
+			AND timing = (
+				SELECT MAX(timing)
+				FROM stocks__history
+				WHERE stock = A.stock
+			)
+		) AS value
 		FROM stocks__history A, stocks__ B
 		WHERE A.stock = B.stock
 		GROUP BY stock
