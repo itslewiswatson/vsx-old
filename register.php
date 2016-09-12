@@ -18,14 +18,19 @@
 		$result = $q->fetch_assoc();
 
 		if ($q->num_rows > 0) {
-			$appendage = "";
-			if (($result["usr"] != $usr) && (strtolower($result["usr"]) == strtolower($usr))) {
-				$appendage = ", in different case,";
+			if (strtolower($result["usr"]) == strtolower($usr)) {
+				$appendage = "";
+				if (($result["usr"] != $usr) && (strtolower($result["usr"]) == strtolower($usr))) {
+					$appendage = ", in different case,";
+				}
+				return array(false, "An account with this username" . $appendage . " already exists");
 			}
-			return array(false, "An account with this username" . $appendage . " already exists");
-		}
-		elseif ($result["email"] !== NULL) {
-			return array(false, "An account with this email already exists");
+			elseif ($result["email"] == $email) {
+				return array(false, "An account with this email already exists");
+			}
+			else {
+				return array(false, "An unknown error occured");
+			}
 		}
 
 		return array(true, "");
@@ -52,6 +57,7 @@
 
 	if (isset($_POST["username"])) {
 		$usr = $_POST["username"];
+		$usr = str_clean($usr);
 		$email = $_POST["email"];
 		$passwd = $_POST["passwd"];
 		$passwd_ = $_POST["passwd_confirm"];
