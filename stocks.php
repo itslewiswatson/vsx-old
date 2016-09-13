@@ -15,7 +15,12 @@
 		$stock = str_clean($_GET["stock"]);
 		$stock = strtoupper($stock);
 
-		$res = $db->query("SELECT " . implode(", ", $fields) . " FROM stocks__, stocks__history	WHERE stocks__.stock = stocks__history.stock AND stocks__.stock = '" . $stock . "'");
+		$res = $db->query(
+			"SELECT " . implode(", ", $fields) . "
+			FROM stocks__, stocks__history
+			WHERE stocks__.stock = stocks__history.stock
+			AND stocks__.stock = '" . $stock . "'"
+		);
 		$stockData = $res->fetch_assoc();
 
 		// If we cannot find anything
@@ -39,6 +44,37 @@
 			<?php
 			exit;
 		}
+		
+		$oc = getStockOpenClose($stockData["stock"]);
+		$open = $oc[0];
+		$close = $oc[1];
+		
+		// Subquery method
+		/*
+			(
+				SELECT open_time
+				FROM exchanges
+				WHERE exchange = B.exchange
+			)
+			(
+				SELECT close_time
+				FROM exchanges
+				WHERE exchange = B.exchange
+			)
+		*/
+		
+		// Check for timing stuff
+		$timing = $db->query(
+			"SELECT open_time, close_time
+			FROM stocks__ A, exchanges B
+			WHERE A.exchange = B.exchange
+			AND TIME(NOW()) BETWEEN
+				" . $open . "
+			AND
+				" . $close . "
+			AND stock = '" . $stockData["stock"] . "'
+			LIMIT 1"
+		);
 
 		// Display everything about the company
 		?>
@@ -98,8 +134,8 @@
 								<img src=<?php echo $stockData["company_logo"]; ?>>
 								<hr>
 								<div style="padding-right: 10px; padding-left: 10px;">
-									<h3><?php echo $stockData["stock"]; ?></h3>
-									<h5><?php echo $stockData["company_name"]; ?></h3>
+									<h3><?php echo $stockData["stock"]; ?> <small>(<a href="exchanges.php?exchange=<?php echo getStockExchange($stockData["stock"]); ?>"><?php echo getStockExchange($stockData["stock"]); ?></a>)</small></h3>
+									<h4><?php echo $stockData["company_name"]; ?></h4>
 									<p><?php echo $stockData["company_bio"]; ?></p>
 								</div>
                                 <hr>
@@ -169,7 +205,15 @@
 								}
 							endif;
 							end:
+							
+							$state = (!$timing || $timing->num_rows == 0) ? "Closed" : "Open";
 							?>
+							<h3 class="text-center">
+								Opening hours: <?php echo date_format(date_create($open), "g:ia"); ?> &mdash; <?php echo date_format(date_create($close), "g:ia"); ?>
+								<br>
+								<small>Currently: <span style="color: #ff0000"><?php echo $state; ?></span></small>
+							</h3>
+							<hr>
 							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
 							<div id="chart_div">
 								<!-- Blank div for the graph -->
@@ -204,7 +248,7 @@
 										</div>
 									</div>
 									<p id="buy-text"></p>
-									<button type="submit" class="btn btn-primary">Buy Shares</button>
+									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Buy Shares</button>
 								</form>
 							</div>
 							<div class="col-md-6 text-center">
@@ -215,7 +259,7 @@
 										</div>
 									</div>
 									<p id="sell-text"></p>
-									<button type="submit" class="btn btn-primary">Sell Shares</button>
+									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Sell Shares</button>
 								</form>
 							</div>
 						</div>
