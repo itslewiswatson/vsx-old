@@ -102,7 +102,34 @@
         }
         return $average;
     }
-
+	
+	function getStockExchange($stock) {
+		$stock = str_clean($stock);
+		global $db;
+		$exch = $db->query(
+			"SELECT exchange
+			FROM stocks__
+			WHERE stock = '" . $stock . "'
+			LIMIT 1"
+		);
+		return $exch->fetch_assoc()["exchange"];
+	}
+	
+	function getStockOpenClose($stock) {
+		$stock = str_clean($stock);
+		global $db;
+		$exch = $db->query(
+			"SELECT open_time, close_time
+			FROM stocks__, exchanges
+			WHERE stocks__.exchange = exchanges.exchange
+			AND stocks__.stock = '" . $stock . "'
+			GROUP BY stocks__.stock
+			LIMIT 1"
+		);
+		$data = $exch->fetch_assoc();
+		return array($data["open_time"], $data["close_time"]);
+	}
+	
 	// Needs a can user buy stock function
 	function buyUserStock($usr, $stock, $qty) {
 		global $db;
