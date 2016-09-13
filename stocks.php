@@ -32,10 +32,10 @@
 						<div class="row">
 							<div class="text-center">
 								<?php
-								errorVSX("
-									<h2>404 - This stock cannot be found :(</h2>
-									<p>It looks like there is no stock matching '" . $stock . "'. Click <a href='stocks.php'>here</a> to view all stocks.</p>
-								");
+									errorVSX("
+										<h2>404 - This stock cannot be found :(</h2>
+										<p>It looks like there is no stock matching '" . $stock . "'. Click <a href='stocks.php'>here</a> to view all stocks.</p>"
+									);
 								?>
 							</div>
 						</div>
@@ -44,25 +44,11 @@
 			<?php
 			exit;
 		}
-		
+
 		$oc = getStockOpenClose($stockData["stock"]);
 		$open = $oc[0];
 		$close = $oc[1];
-		
-		// Subquery method
-		/*
-			(
-				SELECT open_time
-				FROM exchanges
-				WHERE exchange = B.exchange
-			)
-			(
-				SELECT close_time
-				FROM exchanges
-				WHERE exchange = B.exchange
-			)
-		*/
-		
+
 		// Check for timing stuff
 		$timing = $db->query(
 			"SELECT open_time, close_time
@@ -101,7 +87,7 @@
 							);
 							while ($row = $rsq->fetch_assoc()) {
 								// JavaScript works in milliseconds instead of normal seconds.
-								echo "[new Date(" . $row["timing2"] . "), " . $row["price"] . "],\n";
+								echo "[new Date(" . $row["timing2"] . "), {v: " . $row["price"] . ", f: '$" . number_format($row["price"], 2) . "'}],\n";
 							}
 						?>
 					]);
@@ -205,13 +191,13 @@
 								}
 							endif;
 							end:
-							
+
 							$state = (!$timing || $timing->num_rows == 0) ? "Closed" : "Open";
 							?>
 							<h3 class="text-center">
 								Opening hours: <?php echo date_format(date_create($open), "g:ia"); ?> &mdash; <?php echo date_format(date_create($close), "g:ia"); ?>
 								<br>
-								<small>Currently: <span style="color: #ff0000"><?php echo $state; ?></span></small>
+								<small>Currently: <span style="color: <?php echo ($state == "Open" ? "00FF00" : "FF0000"); ?>"><?php echo $state; ?></span></small>
 							</h3>
 							<hr>
 							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
@@ -244,7 +230,7 @@
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
-											<input type="number" id="buy" name="buy" class="form-control" placeholder="Quantity" required>
+											<input type="number" id="buy" name="buy" class="form-control" placeholder="Quantity" required <?php echo ($state == "Closed" ? "disabled" : ""); ?>>
 										</div>
 									</div>
 									<p id="buy-text"></p>
@@ -255,7 +241,7 @@
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
 									<div class="form-group">
 										<div class="input-group col-md-8 col-md-offset-2">
-											<input type="number" id="sell" name="sell" class="form-control" placeholder="Quantity" required>
+											<input type="number" id="sell" name="sell" class="form-control" placeholder="Quantity" required <?php echo ($state == "Closed" ? "disabled" : ""); ?>>
 										</div>
 									</div>
 									<p id="sell-text"></p>
