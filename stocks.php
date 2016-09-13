@@ -10,7 +10,7 @@
 		"DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated"
 	);
 
-	if (isset($_GET["stock"])) {
+	if (isset($_GET["stock"]) && !empty($_GET["stock"])) {
 		$stock = $_GET["stock"];
 		$stock = str_clean($_GET["stock"]);
 		$stock = strtoupper($stock);
@@ -197,7 +197,7 @@
 							<h3 class="text-center">
 								Opening hours: <?php echo date_format(date_create($open), "g:ia"); ?> &mdash; <?php echo date_format(date_create($close), "g:ia"); ?>
 								<br>
-								<small>Currently: <span style="color: <?php echo ($state == "Open" ? "00FF00" : "FF0000"); ?>"><?php echo $state; ?></span></small>
+								<small>Currently: <span style="color: #<?php echo ($state == "Open" ? "00FF00" : "FF0000"); ?>"><?php echo $state; ?></span></small>
 							</h3>
 							<hr>
 							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
