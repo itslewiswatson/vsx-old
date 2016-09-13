@@ -114,8 +114,8 @@
 
 	// q5 is no longer used, use it here
 	// Current returns
-	$q5 = $db->query("
-		SELECT (
+	$q5 = $db->query(
+		"SELECT (
 			(
 				SELECT COALESCE(SUM(total_price), 0)
 				FROM stocks__transactions
@@ -129,8 +129,8 @@
 				WHERE action = 'S'
 				AND usr = '" . $profile . "'
 			)
-		) AS price
-	");
+		) AS price"
+	);
 	$current_returns = $q5->fetch_assoc()["price"];
 
 	// Total investments
