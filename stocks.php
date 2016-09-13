@@ -234,7 +234,13 @@
 										</div>
 									</div>
 									<p id="buy-text"></p>
-									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Buy Shares</button>
+									<?php
+										if (isLoggedIn()) {
+											?>
+												<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Buy Shares</button>
+												<?php
+											}
+										?>
 								</form>
 							</div>
 							<div class="col-md-6 text-center">
@@ -245,7 +251,13 @@
 										</div>
 									</div>
 									<p id="sell-text"></p>
-									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Sell Shares</button>
+									<?php
+										if (isLoggedIn()) {
+											?>
+												<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Sell Shares</button>
+											<?php
+										}
+									?>
 								</form>
 							</div>
 						</div>
