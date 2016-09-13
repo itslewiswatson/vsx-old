@@ -25,14 +25,7 @@
 		}
 	}
 	updateUser();
-
-	function _header() {
-		return;
-	}
-	function _footer() {
-		return;
-	}
-
+	
 	function buttons() {
 		?>
 		<script type="text/javascript">
