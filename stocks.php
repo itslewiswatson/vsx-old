@@ -7,7 +7,9 @@
 		"company_name",
 		"company_logo",
 		"company_bio",
-		"DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated"
+		"DATE_FORMAT(MAX(timing), '%H:%i:%S %d-%m-%Y') AS last_updated",
+		"company_website",
+		"exchange"
 	);
 
 	if (isset($_GET["stock"]) && !empty($_GET["stock"])) {
@@ -48,16 +50,16 @@
 		$oc = getStockOpenClose($stockData["stock"]);
 		$open = $oc[0];
 		$close = $oc[1];
-
+		
 		// Check for timing stuff
 		$timing = $db->query(
 			"SELECT open_time, close_time
 			FROM stocks__ A, exchanges B
 			WHERE A.exchange = B.exchange
 			AND TIME(NOW()) BETWEEN
-				" . $open . "
+				'" . $open . "'
 			AND
-				" . $close . "
+				'" . $close . "'
 			AND stock = '" . $stockData["stock"] . "'
 			LIMIT 1"
 		);
@@ -122,6 +124,7 @@
 								<div style="padding-right: 10px; padding-left: 10px;">
 									<h3><?php echo $stockData["stock"]; ?> <small>(<a href="exchanges.php?exchange=<?php echo getStockExchange($stockData["stock"]); ?>"><?php echo getStockExchange($stockData["stock"]); ?></a>)</small></h3>
 									<h4><?php echo $stockData["company_name"]; ?></h4>
+									<p><a href="<?php echo $stockData["company_website"]; ?>"><?php echo $stockData["company_website"]; ?></a></p>
 									<p><?php echo $stockData["company_bio"]; ?></p>
 								</div>
                                 <hr>
@@ -192,12 +195,12 @@
 							endif;
 							end:
 
-							$state = (!$timing || $timing->num_rows == 0) ? "Closed" : "Open";
+							$state = ($timing->num_rows > 0) ? "Open" : "Closed";
 							?>
 							<h3 class="text-center">
 								Opening hours: <?php echo date_format(date_create($open), "g:ia"); ?> &mdash; <?php echo date_format(date_create($close), "g:ia"); ?>
 								<br>
-								<small>Currently: <span style="color: #<?php echo ($state == "Open" ? "00FF00" : "FF0000"); ?>"><?php echo $state; ?></span></small>
+								<small>Currently: <span style="color: #<?php echo ($state == "Open" ? "15A838" : "FF0000"); ?>"><?php echo $state; ?></span></small>
 							</h3>
 							<hr>
 							<h3 class="text-center">Recent stock prices of <?php echo $stockData["stock"]; ?></h3>
@@ -234,13 +237,7 @@
 										</div>
 									</div>
 									<p id="buy-text"></p>
-									<?php
-										if (isLoggedIn()) {
-											?>
-												<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Buy Shares</button>
-												<?php
-											}
-										?>
+									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Buy Shares</button>
 								</form>
 							</div>
 							<div class="col-md-6 text-center">
@@ -251,13 +248,7 @@
 										</div>
 									</div>
 									<p id="sell-text"></p>
-									<?php
-										if (isLoggedIn()) {
-											?>
-												<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Sell Shares</button>
-											<?php
-										}
-									?>
+									<button type="submit" class="btn btn-primary" <?php echo ($state == "Closed" ? "disabled" : ""); ?>>Sell Shares</button>
 								</form>
 							</div>
 						</div>
@@ -414,6 +405,7 @@
 								<tr>
 									<th><a href="stocks.php?sort=stock&order=<?php global $order; echo $order == "ASC" ? "DESC" : "ASC"; ?>">Stock</a></th>
 									<th>Company Name</th>
+									<th>Exchange</th>
 									<th>Current Price</th>
 									<th>Previous Price</th>
 									<th>Difference</th>
@@ -421,9 +413,8 @@
 									<th>Volume</th>
 								</tr>
 								<?php
+									global $db;
 									while ($row = $res->fetch_assoc()) {
-										global $db;
-
 										// Current price
 										$current_price = getStockCurrentPrice($row["stock"]);
 
@@ -458,6 +449,7 @@
 										echo "<tr>
 											<td><a href='stocks.php?stock=" . $row["stock"] ."'>" . $row["stock"] . "</a></td>
 											<td>" . $row["company_name"] . "</td>
+											<td><a href='" . $row["exchange"] . "'>" . $row["exchange"] . "</a></td>
 											<td>" . "$" . number_format($current_price, 2) . "</td>
 											<td>" . "$" . number_format($previous_price, 2) . "</td>
 											<td class='" . $colour . "'>" . $percentage . "% (" . $diff . ")</td>
