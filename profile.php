@@ -188,7 +188,7 @@
                         <div class="col-md-4 avatar-display">
 							<div class="thumbnail profile">
 								<?php
-									if (isset($result["avatar"])) {
+									if (isset($result["avatar"]) && !empty($result["avatar"])) {
 									?>
 										<img class="img-responsive" src=<?php echo $result["avatar"]; ?> >
 										<hr>
@@ -198,12 +198,17 @@
                                 <div style="padding-left: 10px; padding-right: 10px;">
     								<h3><?php echo $profile; ?></h3>
     								<?php
-    									if (isset($result["name"])) {
+    									if (isset($result["name"]) && !empty($result["name"])) {
     										?>
-    											<h5><i><?php echo $result["name"]; ?></i></h5>
+    											<h4><?php echo $result["name"]; ?></h4>
     										<?php
     									}
-    									if (isset($result["bio"])) {
+										if (isset($result["website"]) && !empty($result["website"])) {
+											?>
+												<p><a href="<?php echo $result["website"]; ?>"><?php echo $result["website"]; ?></a></p>
+											<?php
+										}
+    									if (isset($result["bio"]) && !empty($result["bio"])) {
     										?>
     											<p><?php echo $result["bio"]; ?></p>
     										<?php
@@ -216,7 +221,7 @@
 									?>
 									<div class="btn-group btn-group-justified" role="group" aria-label="...">
 										<div class="btn-group" role="group">
-											<a href="settings.php"><button type="button" class="btn btn-default">Edit Settings</button></a>
+											<a href="settings.php"><button type="button" class="btn btn-primary">Edit Settings</button></a>
 										</div>
 									</div>
 									<?php
