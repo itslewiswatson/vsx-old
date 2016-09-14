@@ -65,7 +65,7 @@
 								<small>
 									Opening hours: <?php echo $exchData["open_time"]; ?> &mdash; <?php echo $exchData["close_time"]; ?>
 									<br>
-									Currently: <span style="color: #<?php echo ($exchData["state"] == "Open") ? "00FF00" : "FF0000"; ?>"><?php echo $exchData["state"]; ?></span>
+									Currently: <span style="color: #<?php echo ($exchData["state"] == "Open") ? "15A838" : "FF0000"; ?>"><?php echo $exchData["state"]; ?></span>
 								</small>
 							</h2>
 							<br>
