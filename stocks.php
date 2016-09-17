@@ -50,7 +50,7 @@
 		$oc = getStockOpenClose($stockData["stock"]);
 		$open = $oc[0];
 		$close = $oc[1];
-		
+
 		// Check for timing stuff
 		$timing = $db->query(
 			"SELECT open_time, close_time
@@ -130,6 +130,10 @@
                                 <hr>
                                 <!-- Stock statistics -->
                                 <div style="padding-right: 10px; padding-left: 10px;">
+                                    <?php
+                                        $shareholders = $db->query("SELECT COALESCE(COUNT(*), 0) AS count FROM stocks__holders WHERE amount > 0 AND stock = '" . $stockData["stock"] . "' LIMIT 1")->fetch_assoc()["count"];
+    							    ?>
+                                    <p><strong>Shareholders:</strong> <?php echo $shareholders; ?></p>
                                     <p><strong>Average Price(s):</strong></p>
                                     <ul>
                                         <li>Daily: <?php echo getStockAverage($stockData["stock"], "day"); ?></li>
@@ -223,11 +227,10 @@
 									$digits = strlen(substr(strrchr($division * 100, "."), 1));
 									?>
 										<p class="text-center">You currently own <strong><?php echo $owned_amount; ?></strong> (<?php echo number_format($division * 100, $digits) ?>%) of <strong><?php echo $stockData["stock"]; ?></strong>, valued at <strong>$<?php echo number_format($value, 2); ?></strong></p>
-										<hr>
+                                        <hr>
 									<?php
 								}
-							?>
-
+                            ?>
 							<!-- Hidden form to retain current GET stock parameter -->
 							<div class="col-md-6 text-center">
 								<form method="post" action="stocks.php?stock=<?php echo $stockData["stock"]; ?>">
