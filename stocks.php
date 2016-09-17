@@ -471,9 +471,16 @@
 	}
 
 	function stockGrid($row) {
+        $diff = getStockCurrentPrice($row["stock"]) - getStockPreviousPrice($row["stock"]);
 		?>
 		<div class="text-center col-md-4">
-			<p><?php echo "<b>" . $row["stock"] . "</b><br>"; echo $row["company_name"]; ?></p>
+			<p>
+                <strong><?php echo $row["stock"]; ?></strong>
+                <br>
+                <?php echo $row["company_name"]; ?>
+                <br>
+                $<?php echo number_format(getStockCurrentPrice($row["stock"]), 2); ?> <img src="<?php echo ($diff >= 0 ? "src/images/up.gif" : "src/images/down.gif"); ?>"/>
+            </p>
 			<a href="stocks.php?stock=<?php echo $row["stock"]; ?>"><img src="<?php echo $row["company_logo"]; ?>"></a>
 		</div>
 		<?php
