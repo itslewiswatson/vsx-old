@@ -32,7 +32,7 @@
 					<div class="col-md-10 col-md-offset-1">
 						<h3 class="text-center">Have a question or concern? Let us know, and we'll be glad to help!</h3>
 						<hr>
-						<div class="col-md-5 col-md-offset-3" style="float: none; margin: 0 auto;">
+						<div class="col-md-5" style="float: none; margin: 0 auto;">
 							<form action="contact.php" method="post">
 								<input type="text" class="form-control" name="name" placeholder="Name" required>
 								<br>
